@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quellen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Loader (3 Sekunden) -->
+<div class="loader" id="siteLoader" aria-hidden="false">
+  <div class="loader__inner" role="status" aria-label="Website lädt">
+    <div class="loader__bar">
+      <div class="loader__fill" id="loaderFill"></div>
+      <div class="loader__plane" id="loaderPlane" aria-hidden="true">✈️</div>
+    </div>
+    <div class="loader__label" id="loaderLabel">Lädt… 0%</div>
+  </div>
+</div>
+
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" href="index.html" aria-label="Start">
+        <span class="logo__mark" aria-hidden="true"></span>
+        <span class="logo__text" id="siteTitle">Globale Produkte im Supermarkt</span>
+      </a>
+</div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <a class="backlink" href="index.html">← Start</a>
+
+      <div class="pagehero reveal">
+        <div class="pagehero__pill">📚 Quellen</div>
+        <h1>Literatur & Nachweise</h1>
+        <p class="lead">
+          Trage hier eure verwendeten Quellen ein. Zusätzlich kannst du auf jeder Produktseite im Feld „Extra“ Quellen oder Links ergänzen.
+        </p>
+      </div>
+
+      <div class="pageextra reveal" style="margin-top:12px;">
+        <h2>Vorlage (zum Ausfüllen)</h2>
+        <div class="prose">
+Buch:
+Autor/in (Jahr): Titel. Verlag, Ort, Seiten.
+
+Bericht / Organisation:
+Organisation (Jahr): Titel. Herausgeber, Kapitel/Abschnitt.
+
+Website:
+Autor/in oder Organisation (Datum/Jahr): Titel. Aufgerufen am: TT.MM.JJJJ.
+(ggf. Link)
+        </div>
+      </div>
+
+      <div class="pagegrid reveal" style="margin-top:12px;">
+        <div class="psection">
+          <h2>Hinweis zum Editor</h2>
+          <p>Der Editor funktioniert ohne Server (Frontend‑only). Das Passwort verhindert nur versehentliche Änderungen – es ist kein „echtes“ Login.</p>
+        </div>
+        <div class="psection">
+          <h2>Schulischer Stil</h2>
+          <p>Schreibe neutral, belege Aussagen mit Quellen und nutze Fachbegriffe (z. B. Lieferkette, Monokultur, Kühlkette, Biodiversität, Zertifizierung).</p>
+        </div>
+        <div class="psection">
+          <h2>Vergleichskriterien</h2>
+          <p>Saison (regional vs. Import), Transportart (Schiff vs. Flug), Wasserverbrauch (Region) und Arbeitsstandards sind zentrale Faktoren.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer reveal">
+    <div class="container footer__inner">
+      <p class="small">Globale Produkte im Supermarkt</p>
+    </div>
+  </footer>
+
+  <script src="store.js"></script>
+  <script>
+    (function(){
+      try{
+        const data = SiteStore.load();
+        const el = document.getElementById("siteTitle");
+        if(el) el.textContent = data.site?.title || el.textContent;
+      }catch(e){}
+    })();
+  </script>
+  <script type="module" src="three-bg.js"></script>
+  <script src="loader.js"></script>
+</body>
+</html>

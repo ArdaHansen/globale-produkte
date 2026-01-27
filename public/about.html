@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Über das Projekt</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Loader (3 Sekunden) -->
+<div class="loader" id="siteLoader" aria-hidden="false">
+  <div class="loader__inner" role="status" aria-label="Website lädt">
+    <div class="loader__bar">
+      <div class="loader__fill" id="loaderFill"></div>
+      <div class="loader__plane" id="loaderPlane" aria-hidden="true">✈️</div>
+    </div>
+    <div class="loader__label" id="loaderLabel">Lädt… 0%</div>
+  </div>
+</div>
+
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" href="index.html" aria-label="Start">
+        <span class="logo__mark" aria-hidden="true"></span>
+        <span class="logo__text" id="siteTitle">Globale Produkte im Supermarkt</span>
+      </a>
+</div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <a class="backlink" href="index.html">← Start</a>
+
+      <div class="pagehero reveal">
+        <div class="pagehero__pill">🌿 Über das Projekt</div>
+        <h1>Worum geht es?</h1>
+        <p class="lead">
+          Supermärkte bieten Produkte aus der ganzen Welt an. Diese Website zeigt an Beispielen,
+          wie <strong>Anbau</strong>, <strong>Arbeitsbedingungen</strong>, <strong>Transport</strong> und <strong>Folgen vor Ort</strong>
+          zusammenhängen – und warum nachhaltiger Konsum sowohl ökologische als auch soziale Standards betrifft.
+        </p>
+      </div>
+
+      <div class="pagegrid reveal">
+        <div class="psection">
+          <h2>Anbau / Produktion</h2>
+          <p>Wo und wie wird angebaut? Wie hoch ist der Wasserbedarf? Welche Rolle spielen Monokulturen, Düngung und Pflanzenschutz?</p>
+        </div>
+        <div class="psection">
+          <h2>Arbeitsbedingungen</h2>
+          <p>Wer arbeitet in den Plantagen oder Betrieben? Sind Löhne fair? Gibt es Schutz vor gefährlichen Stoffen? Wie werden Arbeitsrechte kontrolliert?</p>
+        </div>
+        <div class="psection">
+          <h2>Transport & Logistik</h2>
+          <p>Welche Wege legt das Produkt zurück (Schiff/LKW/Flug)? Wie wichtig sind Kühlung und Verpackung? Welche Emissionen entstehen?</p>
+        </div>
+        <div class="psection">
+          <h2>Folgen vor Ort</h2>
+          <p>Welche Auswirkungen gibt es auf Böden, Wasser, Biodiversität und die Menschen vor Ort? Welche Maßnahmen verbessern die Situation?</p>
+        </div>
+      </div>
+
+      <div class="pageextra reveal" style="margin-top:12px;">
+        <h2>Editor verwenden</h2>
+        <div class="prose">
+Öffne eine Produktseite und klicke unten rechts auf ✎.
+Passwort: 55
+Dort kannst du Titel, Unterzeile und alle 4 Felder bearbeiten. Änderungen werden lokal im Browser gespeichert.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer reveal">
+    <div class="container footer__inner">
+      <p class="small">Globale Produkte im Supermarkt</p>
+    </div>
+  </footer>
+
+  <script src="store.js"></script>
+  <script>
+    (function(){
+      try{
+        const data = SiteStore.load();
+        const el = document.getElementById("siteTitle");
+        if(el) el.textContent = data.site?.title || el.textContent;
+      }catch(e){}
+    })();
+  </script>
+  <script type="module" src="three-bg.js"></script>
+  <script src="loader.js"></script>
+</body>
+</html>

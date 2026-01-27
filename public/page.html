@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Loader (3 Sekunden) -->
+<div class="loader" id="siteLoader" aria-hidden="false">
+  <div class="loader__inner" role="status" aria-label="Website lädt">
+    <div class="loader__bar">
+      <div class="loader__fill" id="loaderFill"></div>
+      <div class="loader__plane" id="loaderPlane" aria-hidden="true">✈️</div>
+    </div>
+    <div class="loader__label" id="loaderLabel">Lädt… 0%</div>
+  </div>
+</div>
+
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" href="index.html" aria-label="Zurück">
+        <span class="logo__mark" aria-hidden="true"></span>
+        <span class="logo__text" id="siteTitle">EcoSupply</span>
+      </a>
+</div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <a class="backlink" href="index.html#felder">← Zurück zur Übersicht</a>
+
+      <div class="pagehero reveal">
+        <div class="pagehero__pill" id="pageHero">🌿 Seite</div>
+        <h1 id="pageTitle">Titel</h1>
+        <p class="lead" id="pageIntro">Diese Seite wird aus den Editor-Daten geladen.</p>
+      </div>
+
+      <div class="pagegrid reveal" id="pageGrid"></div>
+
+      <div class="pageextra reveal" id="pageExtraBox" hidden>
+        <h2>Zusatz</h2>
+        <div class="prose" id="pageExtra"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer reveal">
+    <div class="container footer__inner">
+      <p class="small">Website • Inhalte werden aus localStorage geladen (Frontend-only).</p>
+    </div>
+  </footer>
+
+  
+<!-- Floating Editor Button (nur auf Detailseiten) -->
+<button class="fab" id="pageEditorFab" aria-label="Editor öffnen" title="Editor">✎</button>
+
+<!-- Page Editor Drawer -->
+<div class="drawer" id="pageEditorDrawer" aria-hidden="true">
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Seiten-Editor">
+    <div class="drawer__top">
+      <div class="drawer__title">
+        <div class="badge">Editor</div>
+        <div class="drawer__subtitle" id="pageEditorStatus">Gesperrt</div>
+      </div>
+      <button class="iconbtn" id="pageEditorClose" aria-label="Schließen">✕</button>
+    </div>
+
+    <div class="drawer__content">
+      <div class="lock" id="pageLockArea">
+        <h3>Passwort</h3>
+        <p class="muted">Gib das Passwort ein, um diese Seite zu bearbeiten.</p>
+        <div class="row">
+          <input class="input" id="pagePwInput" type="password" placeholder="Passwort" />
+          <button class="btn btn--solid" id="pageUnlockBtn">Entsperren</button>
+        </div>
+        <p class="small muted">Website-Passwort: <strong>55</strong>.</p>
+      </div>
+
+      <div class="editor" id="pageEditorArea" hidden>
+        <h3>Seite bearbeiten</h3>
+        <p class="muted small">Du bearbeitest nur diese Detailseite (Titel/Unterzeile + 4 Felder).</p>
+
+        <div class="cardmini">
+          <div class="form">
+            <label class="label">Titel (groß)</label>
+            <input class="input" id="peTitle" />
+
+            <label class="label">Unterzeile: Herkunft/Region</label>
+            <input class="input" id="peOrigin" placeholder="z. B. Costa Rica / Ghana / Spanien" />
+
+            <label class="label">Unterzeile: Kurzinfo</label>
+            <textarea class="input area" id="peShort" rows="3"></textarea>
+
+            <label class="label">Hero-Chip (oben links)</label>
+            <input class="input" id="peHero" placeholder="🍍 Ananas" />
+          </div>
+
+          <div class="divider"></div>
+
+          <h4>Abschnitte</h4>
+<p class="muted small">Du kannst Abschnitte hinzufügen, umbenennen, neu sortieren und löschen.</p>
+
+<div class="sectionlist" id="peSections"></div>
+
+<div class="row" style="margin-top:10px;">
+  <button class="btn btn--ghost" id="peAddSection">+ Abschnitt hinzufügen</button>
+</div>
+
+<label class="label" style="margin-top:14px;">Extra (optional)</label>
+            <textarea class="input area" id="peExtra" rows="4" placeholder="Quellen, Links, Notizen …"></textarea>
+          </div>
+
+          <div class="row row--between">
+            <button class="btn btn--ghost" id="peReset">Auf Standard zurück</button>
+            <button class="btn btn--solid" id="peSave">Speichern</button>
+          </div>
+          <p class="small muted">Speichert in localStorage.</p>
+        </div>
+
+        <div class="divider"></div>
+        <button class="btn btn--ghost" id="pageLockBtn">Editor sperren</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="data.js"></script>
+  <script src="store.js"></script>
+  <script src="page.js"></script>
+  <script src="page-editor.js"></script>
+  <script type="module" src="three-bg.js"></script>
+  <script src="loader.js"></script>
+</body>
+</html>
