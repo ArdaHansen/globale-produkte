@@ -1,6 +1,6 @@
 /* renderSectionsDynamic */
 (async function(){
-  SiteStore.ensure();
+  // ❌ SiteStore.ensure() existiert hier nicht -> entfernen
 
   function getId(){
     const params = new URLSearchParams(window.location.search);
@@ -8,7 +8,9 @@
   }
 
   function esc(s){
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
   }
 
   function setupReveal(){
@@ -32,52 +34,58 @@
       .replaceAll('"','&quot;');
   }
 
-function render(){
-    function renderSectionsDynamic(page){
-      const wrap = document.getElementById('sections');
-      if(!wrap) return;
-      const secs = Array.isArray(page.sections) ? page.sections : [];
-      wrap.innerHTML = secs.map((s)=>{
-        const h = (s.h||'').trim();
-        const p = (s.p||'').trim();
-        return `\n          <section class="psection reveal">\n            <h2>${escapeHtml(h)}</h2>\n            <p>${escapeHtml(p).replaceAll('\n','<br>')}</p>\n          </section>\n        `;
-      }).join('');
-    }
+  function renderSectionsDynamic(page){
+    const wrap = document.getElementById('sections');
+    if(!wrap) return;
+    const secs = Array.isArray(page?.sections) ? page.sections : [];
+    wrap.innerHTML = secs.map((s)=>{
+      const h = (s.h||'').trim();
+      const p = (s.p||'').trim();
+      return `
+        <section class="psection reveal">
+          <h2>${escapeHtml(h)}</h2>
+          <p>${escapeHtml(p).replaceAll('\\n','<br>')}</p>
+        </section>
+      `;
+    }).join('');
+  }
 
+  // ✅ render muss async sein, weil await benutzt wird
+  async function render(){
     const data = (SiteStore.loadAsync ? await SiteStore.loadAsync() : SiteStore.load());
     const id = getId();
 
-    document.getElementById("siteTitle").textContent = data.site?.title || "EcoSupply";
+    // ✅ Wichtig: Seite sichtbar machen
+    document.body.classList.add("is-ready");
 
     const page = data.pages?.[id];
     const tile = (data.tiles || []).find(t => (t.pageId || t.id) === id);
 
     const title = page?.title || tile?.title || "Seite";
-    const hero = page?.hero || (tile ? `${tile.emoji||"🌿"} ${tile.title}` : "🌿 Seite");
+    const hero  = page?.hero  || (tile ? `${tile.emoji||"🌿"} ${tile.title}` : "🌿 Seite");
 
+    document.getElementById("siteTitle").textContent = data.site?.title || "EcoSupply";
     document.title = `${title} – ${data.site?.title || "EcoSupply"}`;
 
-    document.getElementById("pageHero").textContent = hero;
+    document.getElementById("pageHero").textContent  = hero;
     document.getElementById("pageTitle").textContent = title;
 
     const introBits = [];
     if(tile?.origin) introBits.push(`Herkunft/Region: ${tile.origin}`);
-    if(tile?.short) introBits.push(tile.short);
-    document.getElementById("pageIntro").textContent = introBits.length ? introBits.join(" • ") : "Inhalte aus dem Editor.";
+    if(tile?.short)  introBits.push(tile.short);
+    document.getElementById("pageIntro").textContent =
+      introBits.length ? introBits.join(" • ") : "Inhalte aus dem Editor.";
 
+    // ✅ NEU: Dynamische Abschnitte rendern (statt nur 4 Boxen)
+    renderSectionsDynamic(page || { sections: [] });
+
+    // ✅ Optional: altes Grid leeren (falls es noch im HTML existiert)
     const grid = document.getElementById("pageGrid");
-    grid.innerHTML = "";
+    if(grid) grid.innerHTML = "";
 
-    const sections = Array.isArray(page?.sections) ? page.sections : [];
-    sections.slice(0,4).forEach(sec => {
-      const box = document.createElement("div");
-      box.className = "psection";
-      box.innerHTML = `<h2>${esc(sec.h || "")}</h2><p>${esc(sec.p || "")}</p>`;
-      grid.appendChild(box);
-    });
-
+    // Extra
     const extraBox = document.getElementById("pageExtraBox");
-    const extraEl = document.getElementById("pageExtra");
+    const extraEl  = document.getElementById("pageExtra");
     const extra = (page?.extra || "").trim();
     if(extra){
       extraBox.hidden = false;
@@ -91,5 +99,5 @@ function render(){
   }
 
   render();
-  window.addEventListener("site:updated", render);
+  window.addEventListener("site:updated", () => render());
 })();
