@@ -1,7 +1,5 @@
 /* renderSectionsDynamic */
 (async function(){
-  // ❌ SiteStore.ensure() existiert hier nicht -> entfernen
-
   function getId(){
     const params = new URLSearchParams(window.location.search);
     return params.get("id") || "f01";
@@ -35,8 +33,13 @@
   }
 
   function renderSectionsDynamic(page){
-    const wrap = document.getElementById('sections');
+    // ✅ Render to #sections if present, otherwise #pageGrid (dein bestehendes Layout)
+    const wrap =
+      document.getElementById('sections') ||
+      document.getElementById('pageGrid');
+
     if(!wrap) return;
+
     const secs = Array.isArray(page?.sections) ? page.sections : [];
     wrap.innerHTML = secs.map((s)=>{
       const h = (s.h||'').trim();
@@ -50,7 +53,6 @@
     }).join('');
   }
 
-  // ✅ render muss async sein, weil await benutzt wird
   async function render(){
     const data = (SiteStore.loadAsync ? await SiteStore.loadAsync() : SiteStore.load());
     const id = getId();
@@ -76,12 +78,10 @@
     document.getElementById("pageIntro").textContent =
       introBits.length ? introBits.join(" • ") : "Inhalte aus dem Editor.";
 
-    // ✅ NEU: Dynamische Abschnitte rendern (statt nur 4 Boxen)
+    // ✅ Dynamische Abschnitte rendern
     renderSectionsDynamic(page || { sections: [] });
 
-    // ✅ Optional: altes Grid leeren (falls es noch im HTML existiert)
-    const grid = document.getElementById("pageGrid");
-    if(grid) grid.innerHTML = "";
+    // ❌ NICHT mehr grid leeren! (sonst löscht du gerade gerenderte Sections wieder)
 
     // Extra
     const extraBox = document.getElementById("pageExtraBox");
@@ -101,3 +101,4 @@
   render();
   window.addEventListener("site:updated", () => render());
 })();
+
