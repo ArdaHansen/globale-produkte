@@ -38,35 +38,63 @@
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
+  // ✅ sehr wichtig: Canvas muss Eingaben bekommen
+  canvas.style.touchAction = "none";
+  canvas.addEventListener(
+    "wheel",
+    (e) => {
+      // ✅ verhindert "Seite scrollt statt zoomen"
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   camera.position.set(0, 0.15, 3.2);
 
   /* =========================
-     Controls (optional)
+     Controls (OrbitControls)
   ========================== */
   let controls = null;
   if (THREE.OrbitControls) {
     controls = new THREE.OrbitControls(camera, canvas);
+
+    // ✅ Damping
     controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+
+    // ✅ Zoom aktiv
+    controls.enableZoom = true;
+    controls.zoomSpeed = 0.9;
+
+    // ✅ Rotate aktiv
+    controls.enableRotate = true;
+    controls.rotateSpeed = 0.8;
+
+    // ✅ Pan deaktiviert (clean)
     controls.enablePan = false;
+
+    // ✅ Limits
     controls.minDistance = 2.0;
     controls.maxDistance = 6.0;
+
+    // optional: Zoom fühlt sich "modern" an
+    controls.screenSpacePanning = false;
   } else {
-    setStatus("Hinweis – OrbitControls fehlen, Drag deaktiviert.");
+    setStatus("Hinweis – OrbitControls fehlen, Drag/Zoom eingeschränkt.");
   }
 
   /* =========================
      Lights (weicher + teurer)
   ========================== */
-  scene.add(new THREE.AmbientLight(0xffffff, 0.70));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
   const key = new THREE.DirectionalLight(0xffffff, 1.0);
   key.position.set(3, 2, 2);
   scene.add(key);
 
-  // leichtes "Rim light" (gibt Edge-Glow)
   const rim = new THREE.DirectionalLight(0x9fffe6, 0.35);
   rim.position.set(-3, 0.6, -2);
   scene.add(rim);
@@ -83,8 +111,8 @@
     () => setStatus("FEHLER – earth.jpg nicht gefunden (/textures/earth.jpg)")
   );
 
-  // bessere Filterung (macht Textur sauberer)
   earthTexture.colorSpace = THREE.SRGBColorSpace;
+  earthTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
   /* =========================
      Globe
@@ -97,11 +125,7 @@
     metalness: 0.05,
   });
 
-  // anisotropy = schärfer bei schrägem Blick
-  earthTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
   const globe = new THREE.Mesh(
-    // mehr Segmente = glatter
     new THREE.SphereGeometry(R, 128, 128),
     globeMat
   );
@@ -160,3 +184,4 @@
 
   animate();
 })();
+
