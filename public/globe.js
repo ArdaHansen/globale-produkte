@@ -6,14 +6,17 @@
     if (statusEl) statusEl.textContent = "Status: " + t;
   }
 
-  /* =========================
-     Checks
-  ========================== */
+  if (!canvas) {
+    console.error("globeCanvas fehlt");
+    return;
+  }
+
   if (!window.THREE) {
     setStatus("FEHLER – three.js nicht geladen (THREE fehlt).");
     return;
   }
 
+  // WebGL check
   try {
     const test = document.createElement("canvas");
     const gl = test.getContext("webgl") || test.getContext("experimental-webgl");
@@ -21,73 +24,50 @@
       setStatus("FEHLER – WebGL nicht verfügbar.");
       return;
     }
-  } catch (e) {
+  } catch {
     setStatus("FEHLER – WebGL-Check fehlgeschlagen.");
     return;
   }
 
   /* =========================
-     Renderer / Scene / Camera
+     Canvas: Eingaben sicher machen
   ========================== */
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-    alpha: true,
-  });
-
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-  // ✅ sehr wichtig: Canvas muss Eingaben bekommen
   canvas.style.touchAction = "none";
+  canvas.style.pointerEvents = "auto";
+
+  // block page scrolling when using wheel over canvas
   canvas.addEventListener(
     "wheel",
     (e) => {
-      // ✅ verhindert "Seite scrollt statt zoomen"
       e.preventDefault();
     },
     { passive: false }
   );
 
+  /* =========================
+     Renderer / Scene / Camera
+  ========================== */
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0.15, 3.2);
 
-  /* =========================
-     Controls (OrbitControls)
-  ========================== */
-  let controls = null;
-  if (THREE.OrbitControls) {
-    controls = new THREE.OrbitControls(camera, canvas);
+  // Zoom-Parameter (wir bewegen die Kamera nach vorne/hinten)
+  let camDist = 3.2;
+  const CAM_MIN = 2.0;
+  const CAM_MAX = 6.0;
 
-    // ✅ Damping
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-
-    // ✅ Zoom aktiv
-    controls.enableZoom = true;
-    controls.zoomSpeed = 0.9;
-
-    // ✅ Rotate aktiv
-    controls.enableRotate = true;
-    controls.rotateSpeed = 0.8;
-
-    // ✅ Pan deaktiviert (clean)
-    controls.enablePan = false;
-
-    // ✅ Limits
-    controls.minDistance = 2.0;
-    controls.maxDistance = 6.0;
-
-    // optional: Zoom fühlt sich "modern" an
-    controls.screenSpacePanning = false;
-  } else {
-    setStatus("Hinweis – OrbitControls fehlen, Drag/Zoom eingeschränkt.");
+  function updateCamera() {
+    camera.position.set(0, 0.15, camDist);
+    camera.lookAt(0, 0, 0);
   }
+  updateCamera();
 
   /* =========================
-     Lights (weicher + teurer)
+     Licht (clean + "teurer")
   ========================== */
   scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
@@ -100,17 +80,15 @@
   scene.add(rim);
 
   /* =========================
-     Earth Texture
+     Textur
   ========================== */
   const textureLoader = new THREE.TextureLoader();
-
   const earthTexture = textureLoader.load(
     "/textures/earth.jpg",
     () => setStatus("bereit ✅ (drag = drehen, scroll = zoomen)"),
     undefined,
     () => setStatus("FEHLER – earth.jpg nicht gefunden (/textures/earth.jpg)")
   );
-
   earthTexture.colorSpace = THREE.SRGBColorSpace;
   earthTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
@@ -119,28 +97,19 @@
   ========================== */
   const R = 1.18;
 
-  const globeMat = new THREE.MeshStandardMaterial({
-    map: earthTexture,
-    roughness: 0.65,
-    metalness: 0.05,
-  });
-
   const globe = new THREE.Mesh(
     new THREE.SphereGeometry(R, 128, 128),
-    globeMat
+    new THREE.MeshStandardMaterial({
+      map: earthTexture,
+      roughness: 0.65,
+      metalness: 0.05,
+    })
   );
   scene.add(globe);
 
-  /* =========================
-     Subtiler Glow
-  ========================== */
   const glow = new THREE.Mesh(
     new THREE.SphereGeometry(R * 1.03, 96, 96),
-    new THREE.MeshBasicMaterial({
-      color: 0x46f7c5,
-      transparent: true,
-      opacity: 0.07,
-    })
+    new THREE.MeshBasicMaterial({ color: 0x46f7c5, transparent: true, opacity: 0.07 })
   );
   scene.add(glow);
 
@@ -155,33 +124,90 @@
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
+  window.addEventListener("resize", resize);
+  resize();
 
-  let tries = 0;
-  function resizeUntilReady() {
-    resize();
-    const r = canvas.getBoundingClientRect();
-    if ((r.width < 10 || r.height < 10) && tries < 60) {
-      tries++;
-      requestAnimationFrame(resizeUntilReady);
-      return;
-    }
+  /* =========================
+     ✅ Eigene Interaktion (Drag + Zoom)
+  ========================== */
+  let isDown = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  // Rotation state
+  let rotY = 0;   // horizontal
+  let rotX = 0;   // vertical (clamped)
+  const ROT_X_MIN = -0.9;
+  const ROT_X_MAX = 0.9;
+
+  function clamp(v, a, b) {
+    return Math.max(a, Math.min(b, v));
   }
 
-  window.addEventListener("resize", resize);
-  resizeUntilReady();
+  canvas.addEventListener("pointerdown", (e) => {
+    isDown = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    canvas.setPointerCapture(e.pointerId);
+  });
+
+  canvas.addEventListener("pointermove", (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    rotY += dx * 0.006;
+    rotX += dy * 0.006;
+    rotX = clamp(rotX, ROT_X_MIN, ROT_X_MAX);
+  });
+
+  function endPointer(e) {
+    isDown = false;
+    try { canvas.releasePointerCapture(e.pointerId); } catch {}
+  }
+  canvas.addEventListener("pointerup", endPointer);
+  canvas.addEventListener("pointercancel", endPointer);
+  canvas.addEventListener("pointerleave", () => (isDown = false));
+
+  // Zoom via wheel
+  canvas.addEventListener(
+    "wheel",
+    (e) => {
+      // deltaY > 0 = rauszoomen, <0 = reinzoomen
+      const zoomStrength = 0.0022;
+      camDist += e.deltaY * zoomStrength;
+      camDist = clamp(camDist, CAM_MIN, CAM_MAX);
+      updateCamera();
+    },
+    { passive: false }
+  );
+
+  /* =========================
+     Auto-Rotation (nur wenn nicht gezogen)
+  ========================== */
+  let autoSpin = true;
+  canvas.addEventListener("pointerdown", () => (autoSpin = false));
+  canvas.addEventListener("pointerup", () => (autoSpin = true));
 
   /* =========================
      Render Loop
   ========================== */
   function animate() {
-    globe.rotation.y += 0.002;
-    glow.rotation.y += 0.002;
+    if (autoSpin) rotY += 0.002;
 
-    if (controls) controls.update();
+    globe.rotation.y = rotY;
+    globe.rotation.x = rotX;
+
+    glow.rotation.y = rotY;
+    glow.rotation.x = rotX;
+
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
   }
 
   animate();
 })();
+
 
