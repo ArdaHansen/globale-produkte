@@ -811,3 +811,6 @@ body{
   background: rgba(47,107,255,0.08);
   border: 1px solid rgba(47,107,255,0.16);
 }
+#globeCanvas{
+  touch-action: none; 
+}
