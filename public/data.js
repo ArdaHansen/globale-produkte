@@ -31,7 +31,7 @@ window.DEFAULT_SITE_DATA = {
       "id": "f03",
       "emoji": "🍌",
       "title": "Banane",
-      "origin": "Lateinamerika (z. B. Ecuador, Costa Rica), Westafrika",
+      "origin": "Lateinamerika (z. B. Ecuador, Costa Rica), Westafrika",
       "short": "Ganzjährig verfügbar. Sensible Ware – braucht Kühlung und eine saubere Lieferkette.",
       "enabled": true,
       "pageId": "f03"
@@ -49,7 +49,7 @@ window.DEFAULT_SITE_DATA = {
       "id": "f05",
       "emoji": "🍫",
       "title": "Kakaobohnen",
-      "origin": "Westafrika (z. B. Ghana, Côte d’Ivoire), Lateinamerika",
+      "origin": "Westafrika (z. B. Ghana, Côte d’Ivoire), Lateinamerika",
       "short": "Grundlage für Schokolade. Lieferketten sind oft komplex.",
       "enabled": true,
       "pageId": "f05"
@@ -149,29 +149,42 @@ window.DEFAULT_SITE_DATA = {
     "f01": {
       "title": "Avocado",
       "hero": "🥑 Avocado",
+      "origins": [
+        { "name": "Mexiko (Michoacán)", "lat": 19.2, "lon": -101.9 },
+        { "name": "Peru (Lima-Region)", "lat": -12.0, "lon": -76.9 },
+        { "name": "Chile (Valparaíso)", "lat": -33.0, "lon": -71.6 },
+        { "name": "Spanien (Andalusien)", "lat": 37.4, "lon": -4.5 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
-          "p": "Avocados werden häufig in sehr trockenen Regionen angebaut (z. B. Küstengebiete in Peru). Da es dort kaum regnet, werden Plantagen intensiv bewässert. Das kann Grundwasser und lokale Wasserressourcen stark belasten, besonders wenn immer tiefere Brunnen nötig werden."
+          "p": "Avocados werden häufig in sehr trockenen Regionen angebaut (z. B. Küstengebiete in Peru). Da es dort kaum regnet, werden Plantagen intensiv bewässert. Das kann Grundwasser und lokale Wasserressourcen stark belasten, besonders wenn immer tiefere Brunnen nötig werden."
         },
         {
           "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Der Avocado-Anbau schafft Arbeitsplätze, viele davon sind jedoch saisonal und schlecht abgesichert. Wenn Plantagen sehr viel Wasser nutzen, kann das die Versorgung der Bevölkerung vor Ort zusätzlich erschweren (z. B. weniger Trinkwasser)."
+          "p": "Der Avocado-Anbau schafft Arbeitsplätze, viele davon sind jedoch saisonal und schlecht abgesichert. Wenn Plantagen sehr viel Wasser nutzen, kann das die Versorgung der Bevölkerung vor Ort zusätzlich erschweren (z. B. weniger Trinkwasser)."
         },
         {
           "h": "Transport & Logistik",
-          "p": "Avocados werden meist in gekühlten Seecontainern aus Ländern wie Peru, Kolumbien oder Chile nach Europa transportiert. Für Qualität und Haltbarkeit sind konstante Temperaturen (ca. 4–13 °C) nötig, was Energie für die Kühlkette bedeutet."
+          "p": "Avocados werden meist in gekühlten Seecontainern aus Ländern wie Peru, Kolumbien oder Chile nach Europa transportiert. Für Qualität und Haltbarkeit sind konstante Temperaturen (ca. 4–13 °C) nötig, was Energie für die Kühlkette bedeutet."
         },
         {
           "h": "CO₂ & Umweltfolgen",
-          "p": "CO₂ entsteht im Anbau u. a. durch Bewässerung (Pumpen), Dünger und Maschinen. Hinzu kommen Emissionen durch lange Transportwege. Insgesamt ist die Bilanz oft vor allem wegen Wasserbedarf und Transport kritisch, je nach Region und Anbaumethode."
+          "p": "CO₂ entsteht im Anbau u. a. durch Bewässerung (Pumpen), Dünger und Maschinen. Hinzu kommen Emissionen durch lange Transportwege. Insgesamt ist die Bilanz oft vor allem wegen Wasserbedarf und Transport kritisch, je nach Region und Anbaumethode."
         }
       ],
       "extra": "Quellen (Avocado):\n- sustainability.aldisouthgroup.com (Human Rights Impact Assessment)\n- theworld.org (Peru’s avocado boom)\n- peta.de (Wasserverbrauch – Hintergrund)\n"
     },
+
     "f02": {
       "title": "Mango",
       "hero": "🥭 Mango",
+      "origins": [
+        { "name": "Indien (Maharashtra)", "lat": 19.8, "lon": 75.3 },
+        { "name": "Peru (Piura)", "lat": -5.2, "lon": -80.6 },
+        { "name": "Brasilien (Bahia)", "lat": -12.6, "lon": -41.7 },
+        { "name": "Westafrika (Senegal)", "lat": 14.5, "lon": -14.4 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
@@ -179,7 +192,7 @@ window.DEFAULT_SITE_DATA = {
         },
         {
           "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Viele Beschäftigte arbeiten lange und körperlich anstrengend, oft zu niedrigen Löhnen. Soziale Absicherung (z. B. Krankenversicherung, bezahlter Urlaub) fehlt in manchen Regionen. Viele Menschen sind stark von der Plantage als Haupt-Einnahmequelle abhängig."
+          "p": "Viele Beschäftigte arbeiten lange und körperlich anstrengend, oft zu niedrigen Löhnen. Soziale Absicherung (z. B. Krankenversicherung, bezahlter Urlaub) fehlt in manchen Regionen. Viele Menschen sind stark von der Plantage als Haupt-Einnahmequelle abhängig."
         },
         {
           "h": "Transport & Logistik",
@@ -192,13 +205,19 @@ window.DEFAULT_SITE_DATA = {
       ],
       "extra": "Quellen (Mango):\n- oxfam.de (‚Mangos mit Makel‘)\n- eosta.com (Veröffentlichungen)\n"
     },
+
     "f03": {
       "title": "Banane",
       "hero": "🍌 Banane",
+      "origins": [
+        { "name": "Ecuador (Guayas)", "lat": -2.2, "lon": -79.9 },
+        { "name": "Costa Rica (Limón)", "lat": 10.0, "lon": -83.0 },
+        { "name": "Westafrika (Ghana)", "lat": 7.9, "lon": -1.0 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
-          "p": "Bananen werden in tropischen Regionen (z. B. Costa Rica, Ecuador, Guatemala) meist auf großen Plantagen angebaut. Um Erträge zu sichern, werden häufig Dünger und Pflanzenschutzmittel eingesetzt; das kann Umwelt und Gesundheit beeinflussen, wenn Schutzmaßnahmen fehlen."
+          "p": "Bananen werden in tropischen Regionen (z. B. Costa Rica, Ecuador, Guatemala) meist auf großen Plantagen angebaut. Um Erträge zu sichern, werden häufig Dünger und Pflanzenschutzmittel eingesetzt; das kann Umwelt und Gesundheit beeinflussen, wenn Schutzmaßnahmen fehlen."
         },
         {
           "h": "Arbeitsbedingungen & Lebensumstände",
@@ -215,78 +234,62 @@ window.DEFAULT_SITE_DATA = {
       ],
       "extra": "Quellen (Banane):\n- rainforest-alliance.org (Certified Bananas / Projekte)\n- makefruitfair.de (Bananen)\n"
     },
+
     "f04": {
       "title": "Kaffee",
       "hero": "☕ Kaffee",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Kaffee: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Kaffee: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Kaffee: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Kaffee: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Kaffee: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Kaffee: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Kaffee: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Kaffee: (Fehlt)" }
       ],
       "extra": ""
     },
+
     "f05": {
       "title": "Kakaobohnen",
       "hero": "🍫 Kakaobohnen",
+      "origins": [
+        { "name": "Ghana", "lat": 7.9, "lon": -1.0 },
+        { "name": "Côte d’Ivoire", "lat": 7.5, "lon": -5.6 },
+        { "name": "Lateinamerika (Ecuador)", "lat": -1.8, "lon": -78.2 }
+      ],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Kakaobohnen wachsen in Schoten am Kakaobaum. Nach der Ernte werden die Bohnen fermentiert und getrocknet – das prägt Aroma und Qualität."
-        },
-        {
-          "h": "Arbeitsbedingungen",
-          "p": "In einigen Regionen gibt es Probleme wie sehr geringe Einkommen und riskante Arbeitsformen. Fairer Handel und Programme gegen Kinderarbeit sind wichtige Ansätze, müssen aber konsequent kontrolliert werden."
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Getrocknete Bohnen werden in Säcken/Containern verschifft, danach verarbeitet. Transport ist relevant, aber große Umweltwirkungen entstehen häufig bereits im Anbau (z. B. Flächenverbrauch)."
-        },
-        {
-          "h": "Folgen vor Ort",
-          "p": "Entwaldung durch Flächenausweitung ist ein zentrales Risiko. Agroforst (Kakao unter Schattenbäumen) kann Biodiversität schützen und Böden stabilisieren."
-        }
+        { "h": "Anbau / Produktion", "p": "Kakaobohnen wachsen in Schoten am Kakaobaum. Nach der Ernte werden die Bohnen fermentiert und getrocknet – das prägt Aroma und Qualität." },
+        { "h": "Arbeitsbedingungen", "p": "In einigen Regionen gibt es Probleme wie sehr geringe Einkommen und riskante Arbeitsformen. Fairer Handel und Programme gegen Kinderarbeit sind wichtige Ansätze, müssen aber konsequent kontrolliert werden." },
+        { "h": "Transport & Logistik", "p": "Getrocknete Bohnen werden in Säcken/Containern verschifft, danach verarbeitet. Transport ist relevant, aber große Umweltwirkungen entstehen häufig bereits im Anbau (z. B. Flächenverbrauch)." },
+        { "h": "Folgen vor Ort", "p": "Entwaldung durch Flächenausweitung ist ein zentrales Risiko. Agroforst (Kakao unter Schattenbäumen) kann Biodiversität schützen und Böden stabilisieren." }
       ],
       "extra": ""
     },
+
     "f06": {
       "title": "Zitrone",
       "hero": "🍋 Zitrone",
+      "origins": [
+        { "name": "Spanien (Murcia)", "lat": 38.0, "lon": -1.2 },
+        { "name": "Italien (Sizilien)", "lat": 37.6, "lon": 14.0 },
+        { "name": "Türkei (Mersin)", "lat": 36.8, "lon": 34.6 }
+      ],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Zitronen wachsen an Zitrusbäumen. Häufig sind Bewässerung und Pflanzenschutz nötig, je nach Region und Schädlingen."
-        },
-        {
-          "h": "Arbeitsbedingungen",
-          "p": "Ernte und Sortierung sind Handarbeit. Standards für Lohn, Arbeitsschutz und sichere Unterkünfte sind entscheidend."
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Innerhalb Europas meist LKW‑Transport, teils gekühlt. Lagerung kann die Saison verlängern, benötigt aber Energie."
-        },
-        {
-          "h": "Folgen vor Ort",
-          "p": "Bewässerung kann lokale Wasserressourcen belasten. Nachhaltigkeit: Tropfbewässerung, Begrünung und reduzierte Chemie."
-        }
+        { "h": "Anbau / Produktion", "p": "Zitronen wachsen an Zitrusbäumen. Häufig sind Bewässerung und Pflanzenschutz nötig, je nach Region und Schädlingen." },
+        { "h": "Arbeitsbedingungen", "p": "Ernte und Sortierung sind Handarbeit. Standards für Lohn, Arbeitsschutz und sichere Unterkünfte sind entscheidend." },
+        { "h": "Transport & Logistik", "p": "Innerhalb Europas meist LKW-Transport, teils gekühlt. Lagerung kann die Saison verlängern, benötigt aber Energie." },
+        { "h": "Folgen vor Ort", "p": "Bewässerung kann lokale Wasserressourcen belasten. Nachhaltigkeit: Tropfbewässerung, Begrünung und reduzierte Chemie." }
       ],
       "extra": ""
     },
+
     "f07": {
       "title": "Reis",
       "hero": "🍚 Reis",
+      "origins": [
+        { "name": "Indien (Punjab)", "lat": 31.0, "lon": 75.4 },
+        { "name": "China (Yangtze-Delta)", "lat": 31.2, "lon": 121.5 },
+        { "name": "Indonesien (Java)", "lat": -7.3, "lon": 110.0 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
@@ -302,18 +305,25 @@ window.DEFAULT_SITE_DATA = {
         },
         {
           "h": "CO₂ & Umweltfolgen",
-          "p": "Beim Reisanbau entsteht Methan, das deutlich klimawirksamer als CO₂ ist (häufig wird etwa ~25× genannt). Zusätzlich kann der hohe Wasserbedarf Ökosysteme belasten. Verbesserungen sind z. B. alternative Bewässerungsmethoden und effizientere Anbausysteme."
+          "p": "Beim Reisanbau entsteht Methan, das deutlich klimawirksamer als CO₂ ist (häufig wird etwa ~25× genannt). Zusätzlich kann der hohe Wasserbedarf Ökosysteme belasten. Verbesserungen sind z. B. alternative Bewässerungsmethoden und effizientere Anbausysteme."
         }
       ],
       "extra": "Quellen (Reis):\n- bzfe.de (Ist Reis noch zukunftsfähig?)\n- fairtrade.net (Rice)\n- wikipedia.org (Reis)\n- focus.de (Herkunft)\n"
     },
+
     "f08": {
       "title": "Wassermelone",
       "hero": "🍉 Wassermelone",
+      "origins": [
+        { "name": "Spanien (Andalusien)", "lat": 37.3, "lon": -5.9 },
+        { "name": "Italien (Emilia-Romagna)", "lat": 44.5, "lon": 11.3 },
+        { "name": "Griechenland (Peloponnes)", "lat": 37.5, "lon": 22.4 },
+        { "name": "Marokko (Souss-Massa)", "lat": 30.4, "lon": -9.6 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
-          "p": "Wassermelonen werden vor allem in warmen Regionen angebaut (z. B. Spanien, Italien, Griechenland; außerhalb Europas u. a. Türkei und Marokko). Der Anbau benötigt viel Wasser und kann in trockenen Gebieten Böden und Wasserressourcen belasten. Häufig kommen auch chemische Düngemittel zum Einsatz, was Böden, Gewässer und Biodiversität beeinflussen kann."
+          "p": "Wassermelonen werden vor allem in warmen Regionen angebaut (z. B. Spanien, Italien, Griechenland; außerhalb Europas u. a. Türkei und Marokko). Der Anbau benötigt viel Wasser und kann in trockenen Gebieten Böden und Wasserressourcen belasten. Häufig kommen auch chemische Düngemittel zum Einsatz, was Böden, Gewässer und Biodiversität beeinflussen kann."
         },
         {
           "h": "Arbeitsbedingungen & Lebensumstände",
@@ -330,9 +340,16 @@ window.DEFAULT_SITE_DATA = {
       ],
       "extra": "Quellen (Wassermelone):\n- destatis.de (Presse/Importdaten)\n- riskmap.fairtrade.net (Labour rights)\n- wikifarmer.com (Anbau)\n"
     },
+
     "f09": {
       "title": "Tomaten",
       "hero": "🍅 Tomaten",
+      "origins": [
+        { "name": "Spanien (Almería)", "lat": 36.83, "lon": -2.45 },
+        { "name": "Italien (Kampanien)", "lat": 40.9, "lon": 14.3 },
+        { "name": "Niederlande (Westland)", "lat": 52.0, "lon": 4.2 },
+        { "name": "Marokko (Agadir)", "lat": 30.4, "lon": -9.6 }
+      ],
       "sections": [
         {
           "h": "Anbau / Produktion",
@@ -340,7 +357,7 @@ window.DEFAULT_SITE_DATA = {
         },
         {
           "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "In einigen Anbauregionen (u. a. Südeuropa) werden Arbeitsbedingungen und sehr niedrige Löhne von Feldarbeitern kritisiert. Wichtig sind Arbeitsverträge, Kontrolle von Subunternehmen, sichere Unterkünfte und Arbeitsschutz."
+          "p": "In einigen Anbauregionen (u. a. Südeuropa) werden Arbeitsbedingungen und sehr niedrige Löhne von Feldarbeitern kritisiert. Wichtig sind Arbeitsverträge, Kontrolle von Subunternehmen, sichere Unterkünfte und Arbeitsschutz."
         },
         {
           "h": "Transport & Logistik",
@@ -353,141 +370,86 @@ window.DEFAULT_SITE_DATA = {
       ],
       "extra": "Quellen (Tomate):\n- verbraucherzentrale.de (Anbau & Einkauf)\n- landwirtschaft.de (Importübersichten)\n- schule.zdf.de (Planet e)\n"
     },
+
     "f10": {
       "title": "Weintrauben",
       "hero": "🍇 Weintrauben",
+      "origins": [
+        { "name": "Italien (Apulien)", "lat": 41.1, "lon": 16.9 },
+        { "name": "Spanien (Valencia)", "lat": 39.5, "lon": -0.4 },
+        { "name": "Südafrika (Western Cape)", "lat": -33.9, "lon": 18.5 },
+        { "name": "Chile (Central Valley)", "lat": -34.2, "lon": -70.7 }
+      ],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Trauben wachsen an Reben. Tafeltrauben werden oft intensiv gepflegt (Schnitt, Ausdünnen, Bewässerung), um große, gleichmäßige Früchte zu erhalten."
-        },
-        {
-          "h": "Arbeitsbedingungen",
-          "p": "Ernte und Pflege sind arbeitsintensiv. Faire Bezahlung, Arbeitsschutz (Sonne/Hitze) und stabile Arbeitsverträge sind zentrale Kriterien."
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Importtrauben kommen per Schiff (Übersee) oder LKW (Europa). Kühlung und Verpackung sind wichtig für Haltbarkeit."
-        },
-        {
-          "h": "Folgen vor Ort",
-          "p": "Bewässerung kann Wasserressourcen belasten; Pflanzenschutz beeinflusst Biodiversität. Nachhaltige Ansätze: Begrünung zwischen Reihen, integrierter Pflanzenschutz."
-        }
+        { "h": "Anbau / Produktion", "p": "Trauben wachsen an Reben. Tafeltrauben werden oft intensiv gepflegt (Schnitt, Ausdünnen, Bewässerung), um große, gleichmäßige Früchte zu erhalten." },
+        { "h": "Arbeitsbedingungen", "p": "Ernte und Pflege sind arbeitsintensiv. Faire Bezahlung, Arbeitsschutz (Sonne/Hitze) und stabile Arbeitsverträge sind zentrale Kriterien." },
+        { "h": "Transport & Logistik", "p": "Importtrauben kommen per Schiff (Übersee) oder LKW (Europa). Kühlung und Verpackung sind wichtig für Haltbarkeit." },
+        { "h": "Folgen vor Ort", "p": "Bewässerung kann Wasserressourcen belasten; Pflanzenschutz beeinflusst Biodiversität. Nachhaltige Ansätze: Begrünung zwischen Reihen, integrierter Pflanzenschutz." }
       ],
       "extra": ""
     },
+
     "f11": {
       "title": "Papaya",
       "hero": "🥭 Papaya",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Papaya: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Papaya: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Papaya: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Papaya: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Papaya: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Papaya: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Papaya: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Papaya: (Fehlt)" }
       ],
       "extra": ""
     },
+
     "f12": {
       "title": "Gurken",
       "hero": "🥒 Gurken",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Gurken: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Gurken: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Gurken: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Gurken: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Gurken: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Gurken: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Gurken: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Gurken: (Fehlt)" }
       ],
       "extra": ""
     },
+
     "f13": {
       "title": "Pomelo",
       "hero": "🍈 Pomelo",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Pomelo: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Pomelo: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Pomelo: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Pomelo: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Pomelo: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Pomelo: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Pomelo: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Pomelo: (Fehlt)" }
       ],
       "extra": ""
     },
+
     "f14": {
       "title": "Granatapfel",
       "hero": "🍎 Granatapfel",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Granatapfel: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Granatapfel: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Granatapfel: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Granatapfel: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Granatapfel: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Granatapfel: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Granatapfel: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Granatapfel: (Fehlt)" }
       ],
       "extra": ""
     },
+
     "f15": {
       "title": "Zucker",
       "hero": "🍬 Zucker",
+      "origins": [],
       "sections": [
-        {
-          "h": "Anbau / Produktion",
-          "p": "Zucker: (Fehlt)"
-        },
-        {
-          "h": "Arbeitsbedingungen & Lebensumstände",
-          "p": "Zucker: (Fehlt)"
-        },
-        {
-          "h": "Transport & Logistik",
-          "p": "Zucker: (Fehlt)"
-        },
-        {
-          "h": "CO₂ & Umweltfolgen",
-          "p": "Zucker: (Fehlt)"
-        }
+        { "h": "Anbau / Produktion", "p": "Zucker: (Fehlt)" },
+        { "h": "Arbeitsbedingungen & Lebensumstände", "p": "Zucker: (Fehlt)" },
+        { "h": "Transport & Logistik", "p": "Zucker: (Fehlt)" },
+        { "h": "CO₂ & Umweltfolgen", "p": "Zucker: (Fehlt)" }
       ],
       "extra": ""
     }
