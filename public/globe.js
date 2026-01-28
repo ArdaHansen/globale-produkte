@@ -7,14 +7,13 @@
   }
 
   /* =========================
-     Sicherheits-Checks
+     Checks
   ========================== */
   if (!window.THREE) {
     setStatus("FEHLER – three.js nicht geladen (THREE fehlt).");
     return;
   }
 
-  // WebGL Check
   try {
     const test = document.createElement("canvas");
     const gl = test.getContext("webgl") || test.getContext("experimental-webgl");
@@ -37,6 +36,7 @@
   });
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
 
@@ -58,13 +58,18 @@
   }
 
   /* =========================
-     Licht
+     Lights (weicher + teurer)
   ========================== */
-  scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.70));
 
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  dirLight.position.set(3, 2, 2);
-  scene.add(dirLight);
+  const key = new THREE.DirectionalLight(0xffffff, 1.0);
+  key.position.set(3, 2, 2);
+  scene.add(key);
+
+  // leichtes "Rim light" (gibt Edge-Glow)
+  const rim = new THREE.DirectionalLight(0x9fffe6, 0.35);
+  rim.position.set(-3, 0.6, -2);
+  scene.add(rim);
 
   /* =========================
      Earth Texture
@@ -78,36 +83,45 @@
     () => setStatus("FEHLER – earth.jpg nicht gefunden (/textures/earth.jpg)")
   );
 
+  // bessere Filterung (macht Textur sauberer)
+  earthTexture.colorSpace = THREE.SRGBColorSpace;
+
   /* =========================
-     Globus
+     Globe
   ========================== */
   const R = 1.18;
 
+  const globeMat = new THREE.MeshStandardMaterial({
+    map: earthTexture,
+    roughness: 0.65,
+    metalness: 0.05,
+  });
+
+  // anisotropy = schärfer bei schrägem Blick
+  earthTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
   const globe = new THREE.Mesh(
-    new THREE.SphereGeometry(R, 64, 64),
-    new THREE.MeshStandardMaterial({
-      map: earthTexture,
-      roughness: 0.85,
-      metalness: 0.12,
-    })
+    // mehr Segmente = glatter
+    new THREE.SphereGeometry(R, 128, 128),
+    globeMat
   );
   scene.add(globe);
 
   /* =========================
-     Glow-Effekt
+     Subtiler Glow
   ========================== */
   const glow = new THREE.Mesh(
-    new THREE.SphereGeometry(R * 1.03, 64, 64),
+    new THREE.SphereGeometry(R * 1.03, 96, 96),
     new THREE.MeshBasicMaterial({
       color: 0x46f7c5,
       transparent: true,
-      opacity: 0.08,
+      opacity: 0.07,
     })
   );
   scene.add(glow);
 
   /* =========================
-     Resize Handling
+     Resize
   ========================== */
   function resize() {
     const rect = canvas.getBoundingClientRect();
