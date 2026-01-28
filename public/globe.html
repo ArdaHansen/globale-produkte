@@ -2,141 +2,94 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Globus – EcoSupply</title>
-
-  <!-- Nutze euren bestehenden Style -->
-  <link rel="stylesheet" href="style.css" />
-
+  <link rel="stylesheet" href="style.css">
   <style>
-    /* Fallback-Styles, falls style.css nicht alles abdeckt */
-    body { margin: 0; }
-
-    .globe-wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 18px 40px;
-    }
-
-    .crumb{
-      font-size: 14px;
-      opacity: .8;
-      margin-bottom: 12px;
-    }
-    .crumb a{ text-decoration: none; }
-    .crumb a:hover{ text-decoration: underline; }
-
-    .globe-title{
-      font-size: clamp(34px, 4vw, 54px);
-      margin: 10px 0 6px;
-      letter-spacing: -0.02em;
-    }
-    .globe-sub{
-      margin: 0 0 18px;
-      max-width: 740px;
-      opacity: .85;
-      line-height: 1.5;
-    }
-
-    .globe-card{
+    body { margin:0; }
+    .globePage { padding: 42px 18px 70px; }
+    .globeWrap { max-width: 1040px; margin: 0 auto; }
+    .crumbs { font-size: 14px; color: rgba(20,20,20,.65); margin-bottom: 14px; }
+    .crumbs a { color: inherit; }
+    .globeTitle { font-size: clamp(36px, 5vw, 56px); line-height: 1.05; margin: 10px 0 8px; }
+    .globeSub { max-width: 880px; color: rgba(20,20,20,.70); margin: 0 0 18px; }
+    .panel {
       border-radius: 18px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(10, 40, 30, 0.12);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-      overflow: hidden;
-      padding: 18px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(0,0,0,.07);
+      box-shadow: 0 22px 60px rgba(0,0,0,.06);
+      padding: 16px;
     }
-
-    .globe-stage{
-      position: relative;
-      width: 100%;
-      height: min(520px, 66vh);
+    .canvasBox {
       border-radius: 16px;
-      background: rgba(255,255,255,0.35);
-      border: 1px solid rgba(10, 40, 30, 0.10);
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(0,0,0,.07);
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: 420px;
     }
-
-    #globeCanvas{
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .globe-meta{
-      margin-top: 10px;
+    #globeCanvas { width: 100%; height: 520px; display:block; }
+    .statusRow {
+      display:flex; gap:10px; align-items:center; justify-content:flex-start;
+      padding: 10px 4px 2px;
+      color: rgba(20,20,20,.70);
       font-size: 13px;
-      opacity: .8;
-      display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      align-items: center;
     }
-
-    .chip{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    .chip {
+      display:inline-flex; align-items:center; gap:8px;
       padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(10,40,30,0.14);
-      background: rgba(255,255,255,0.50);
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.55);
+      color: rgba(20,20,20,.78);
+    }
+    .tooltip {
+      position: fixed;
+      z-index: 9999;
+      display:none;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(10,10,10,.84);
+      color: #fff;
       font-size: 12px;
-      opacity: .9;
+      max-width: 280px;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
     }
-
-    .hint{
-      opacity: .7;
-    }
+    code { background: rgba(0,0,0,.06); padding: 2px 6px; border-radius: 8px; }
   </style>
 </head>
-
 <body>
+  <main class="globePage">
+    <div class="globeWrap">
+      <div class="crumbs">← <a href="/index.html">Start</a> / <strong>Globus</strong></div>
 
-  <!-- Optional: deine vorhandene Nav kann hier rein.
-       Ich lasse es bewusst simpel, damit es bei dir nicht kollidiert. -->
-  <div class="globe-wrap">
-    <div class="crumb">
-      ← <a href="index.html">Start</a> / <strong>Globus</strong>
-    </div>
+      <h1 class="globeTitle">Globaler Warenstrom</h1>
+      <p class="globeSub">
+        Interaktiver 3D‑Globus mit typischen Herkunftsregionen von Supermarkt‑Produkten.
+        Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z.&nbsp;B. Banane).
+      </p>
 
-    <h1 class="globe-title">Globaler Warenstrom</h1>
-    <p class="globe-sub">
-      Interaktiver 3D-Globus mit typischen Herkunftsregionen von Supermarkt-Produkten.
-      Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z. B. Banane).
-    </p>
+      <div class="panel">
+        <div class="canvasBox">
+          <canvas id="globeCanvas"></canvas>
+        </div>
 
-    <div class="globe-card">
-      <div class="globe-stage">
-        <canvas id="globeCanvas" aria-label="3D Globus"></canvas>
-      </div>
-
-      <div class="globe-meta">
-        <span id="globeStatus">Status: lädt…</span>
-        <span class="chip">🖱️ <span class="hint">drag = drehen</span></span>
-        <span class="chip">🔍 <span class="hint">scroll = zoomen</span></span>
+        <div class="statusRow">
+          <div id="globeStatus">Status: …</div>
+          <span class="chip">🖱️ drag = drehen</span>
+          <span class="chip">🔍 scroll = zoomen</span>
+          <span class="chip" id="globeHint"></span>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- =========================
-       SCRIPTS (Reihenfolge!)
-       ========================= -->
+  <div class="tooltip" id="globeTooltip"></div>
 
-  <!-- 1) three.js + OrbitControls (GLOBAL THREE) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-
-  <!-- 2) Eure Daten + Store (damit SiteStore / DEFAULT_SITE_DATA existieren) -->
-  <script src="data.js"></script>
-  <script src="store.js"></script>
-
-  <!-- 3) Globe Logik -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
   <script src="globe.js"></script>
-
 </body>
 </html>
 
