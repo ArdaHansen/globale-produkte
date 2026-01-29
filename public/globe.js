@@ -104,6 +104,8 @@
 
   // Pins container as child of earth -> rotates with globe
   const pinsGroup = new THREE.Group();
+  let activeFilterId = "all";
+
   earth.add(pinsGroup);
 
   // ---- Utils
@@ -205,7 +207,8 @@
     spr.position.copy(pos);
 
     // baseline scale (will be adjusted each frame)
-    spr.scale.set(0.22, 0.22, 0.22);
+    const baseScale = (activeFilterId === 'all') ? 0.14 : 0.18;
+    spr.scale.set(baseScale, baseScale, baseScale);
 
     pinsGroup.add(spr);
     sprites.push(spr);
@@ -289,12 +292,15 @@
   }
 
   function renderPins(pins, products, filterId) {
+    activeFilterId = (filterId || 'all');
+
     clearPins();
     const list = filterId && filterId !== "all" ? pins.filter((p) => p.productId === filterId) : pins;
     for (const p of list) {
       const info = products[p.productId];
       addPin(p, info);
     }
+    window.__pinSprites = pinsGroup.children.slice();
     setStatus(`bereit ✅ (${list.length} Pins)`);
   }
 
