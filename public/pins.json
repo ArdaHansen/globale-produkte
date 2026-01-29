@@ -1,7 +1,72 @@
-[
-  { "id":"f03", "emoji":"🍌", "lat":-2.2, "lon":-79.9 },
-  { "id":"f03", "emoji":"🍌", "lat":10.0, "lon":-83.0 },
-  { "id":"f05", "emoji":"🍫", "lat":7.9, "lon":-1.0 },
-  { "id":"f01", "emoji":"🥑", "lat":19.2, "lon":-101.9 },
-  { "id":"f02", "emoji":"🥭", "lat":19.8, "lon":75.3 }
-]
+{
+  "version": 1,
+  "pins": [
+    { "productId": "f01", "emoji": "🥑", "label": "Mexiko (Michoacán)", "lat": 19.2, "lon": -101.9 },
+    { "productId": "f01", "emoji": "🥑", "label": "Peru (Lima-Region)", "lat": -12.0, "lon": -76.9 },
+    { "productId": "f01", "emoji": "🥑", "label": "Chile (Valparaíso)", "lat": -33.0, "lon": -71.6 },
+    { "productId": "f01", "emoji": "🥑", "label": "Spanien (Andalusien)", "lat": 37.4, "lon": -4.5 },
+
+    { "productId": "f02", "emoji": "🥭", "label": "Indien (Maharashtra)", "lat": 19.8, "lon": 75.3 },
+    { "productId": "f02", "emoji": "🥭", "label": "Peru (Piura)", "lat": -5.2, "lon": -80.6 },
+    { "productId": "f02", "emoji": "🥭", "label": "Brasilien (Bahia)", "lat": -12.6, "lon": -41.7 },
+    { "productId": "f02", "emoji": "🥭", "label": "Westafrika (Senegal)", "lat": 14.5, "lon": -14.4 },
+
+    { "productId": "f03", "emoji": "🍌", "label": "Ecuador (Guayas)", "lat": -2.2, "lon": -79.9 },
+    { "productId": "f03", "emoji": "🍌", "label": "Costa Rica (Limón)", "lat": 10.0, "lon": -83.0 },
+    { "productId": "f03", "emoji": "🍌", "label": "Ghana (Westafrika)", "lat": 7.9, "lon": -1.0 },
+
+    { "productId": "f04", "emoji": "☕", "label": "Brasilien (São Paulo)", "lat": -23.55, "lon": -46.63 },
+    { "productId": "f04", "emoji": "☕", "label": "Kolumbien (Bogotá)", "lat": 4.71, "lon": -74.07 },
+    { "productId": "f04", "emoji": "☕", "label": "Äthiopien (Addis Abeba)", "lat": 9.03, "lon": 38.74 },
+
+    { "productId": "f05", "emoji": "🍫", "label": "Ghana", "lat": 7.9, "lon": -1.0 },
+    { "productId": "f05", "emoji": "🍫", "label": "Côte d’Ivoire", "lat": 7.5, "lon": -5.6 },
+    { "productId": "f05", "emoji": "🍫", "label": "Ecuador (Lateinamerika)", "lat": -1.8, "lon": -78.2 },
+
+    { "productId": "f06", "emoji": "🍋", "label": "Spanien (Murcia)", "lat": 38.0, "lon": -1.2 },
+    { "productId": "f06", "emoji": "🍋", "label": "Italien (Sizilien)", "lat": 37.6, "lon": 14.0 },
+    { "productId": "f06", "emoji": "🍋", "label": "Türkei (Mersin)", "lat": 36.8, "lon": 34.6 },
+
+    { "productId": "f07", "emoji": "🍚", "label": "Indien (Punjab)", "lat": 31.0, "lon": 75.4 },
+    { "productId": "f07", "emoji": "🍚", "label": "China (Yangtze-Delta)", "lat": 31.2, "lon": 121.5 },
+    { "productId": "f07", "emoji": "🍚", "label": "Indonesien (Java)", "lat": -7.3, "lon": 110.0 },
+
+    { "productId": "f08", "emoji": "🍉", "label": "Spanien (Andalusien)", "lat": 37.3, "lon": -5.9 },
+    { "productId": "f08", "emoji": "🍉", "label": "Italien (Emilia-Romagna)", "lat": 44.5, "lon": 11.3 },
+    { "productId": "f08", "emoji": "🍉", "label": "Griechenland (Peloponnes)", "lat": 37.5, "lon": 22.4 },
+    { "productId": "f08", "emoji": "🍉", "label": "Marokko (Souss-Massa)", "lat": 30.4, "lon": -9.6 },
+
+    { "productId": "f09", "emoji": "🍅", "label": "Spanien (Almería)", "lat": 36.83, "lon": -2.45 },
+    { "productId": "f09", "emoji": "🍅", "label": "Italien (Kampanien)", "lat": 40.9, "lon": 14.3 },
+    { "productId": "f09", "emoji": "🍅", "label": "Niederlande (Westland)", "lat": 52.0, "lon": 4.2 },
+    { "productId": "f09", "emoji": "🍅", "label": "Marokko (Agadir)", "lat": 30.4, "lon": -9.6 },
+
+    { "productId": "f10", "emoji": "🍇", "label": "Italien (Apulien)", "lat": 41.1, "lon": 16.9 },
+    { "productId": "f10", "emoji": "🍇", "label": "Spanien (Valencia)", "lat": 39.5, "lon": -0.4 },
+    { "productId": "f10", "emoji": "🍇", "label": "Südafrika (Western Cape)", "lat": -33.9, "lon": 18.5 },
+    { "productId": "f10", "emoji": "🍇", "label": "Chile (Central Valley)", "lat": -34.2, "lon": -70.7 },
+
+    { "productId": "f11", "emoji": "🥭", "label": "Mexiko (Chiapas)", "lat": 16.7, "lon": -92.6 },
+    { "productId": "f11", "emoji": "🥭", "label": "Indien (Kerala)", "lat": 10.2, "lon": 76.3 },
+    { "productId": "f11", "emoji": "🥭", "label": "Brasilien (Bahia)", "lat": -12.6, "lon": -41.7 },
+
+    { "productId": "f12", "emoji": "🥒", "label": "Niederlande (Westland)", "lat": 52.0, "lon": 4.2 },
+    { "productId": "f12", "emoji": "🥒", "label": "Spanien (Almería)", "lat": 36.83, "lon": -2.45 },
+    { "productId": "f12", "emoji": "🥒", "label": "Türkei (Antalya)", "lat": 36.9, "lon": 30.7 },
+
+    { "productId": "f13", "emoji": "🍈", "label": "China (Guangdong)", "lat": 23.1, "lon": 113.3 },
+    { "productId": "f13", "emoji": "🍈", "label": "Malaysia (Kuala Lumpur)", "lat": 3.1, "lon": 101.7 },
+    { "productId": "f13", "emoji": "🍈", "label": "Thailand (Bangkok)", "lat": 13.7, "lon": 100.5 },
+    { "productId": "f13", "emoji": "🍈", "label": "Israel (Küste)", "lat": 31.5, "lon": 34.9 },
+
+    { "productId": "f14", "emoji": "🍎", "label": "Türkei (Ägäis)", "lat": 38.4, "lon": 27.1 },
+    { "productId": "f14", "emoji": "🍎", "label": "Kaukasus (Dagestan)", "lat": 42.98, "lon": 47.5 },
+    { "productId": "f14", "emoji": "🍎", "label": "Iran (Zentral)", "lat": 32.0, "lon": 53.0 },
+    { "productId": "f14", "emoji": "🍎", "label": "Irak (Bagdad)", "lat": 33.3, "lon": 44.4 },
+
+    { "productId": "f15", "emoji": "🍬", "label": "Indien (Uttar Pradesh – Zuckerrohr)", "lat": 26.8, "lon": 80.9 },
+    { "productId": "f15", "emoji": "🍬", "label": "Brasilien (São Paulo – Zuckerrohr)", "lat": -23.5, "lon": -47.0 },
+    { "productId": "f15", "emoji": "🍬", "label": "Europa (Frankreich – Zuckerrübe)", "lat": 48.5, "lon": 2.5 },
+    { "productId": "f15", "emoji": "🍬", "label": "Europa (Deutschland – Zuckerrübe)", "lat": 52.1, "lon": 11.6 }
+  ]
+}

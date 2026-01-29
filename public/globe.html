@@ -2,74 +2,131 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Globaler Warenstrom – Globus</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root{
+      --bg:#e8f8ef;
+      --card:#f6fffa;
+      --border:#cfe6db;
+      --text:#0c2a1a;
+      --muted:#4c6a59;
+      --pill:#ffffff;
+      --shadow:0 10px 30px rgba(0,0,0,.10);
+      --radius:18px;
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(ellipse at top, #c8f0d8 0%, var(--bg) 55%, #eefaf4 100%);
+    }
+    .wrap{ max-width: 1100px; margin: 48px auto; padding: 0 22px; }
+    .crumb{ font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+    .crumb a{ color:#2c7a55; text-decoration:none; }
+    h1{ font-size: 54px; line-height:1.02; margin: 0 0 10px 0; letter-spacing:-1px; }
+    .sub{ max-width: 820px; color: var(--muted); font-size: 15px; line-height:1.55; }
+    .card{
+      margin-top: 22px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .stage{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      height: 520px;
+      position: relative;
+      overflow: hidden;
+    }
+    canvas{ width:100%; height:100%; display:block; }
+    .bar{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+      padding: 14px 4px 2px 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .pill{
+      background: var(--pill);
+      border:1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 999px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.06);
+      display:flex; align-items:center; gap:8px;
+    }
+    .dot{ width:8px; height:8px; border-radius: 50%; background:#22b356; }
+    select{
+      border:none; outline:none; background:transparent; font:inherit; color:inherit;
+    }
+    .tip code{ background: rgba(34,179,86,.12); color:#1b6c41; padding: 2px 6px; border-radius: 8px; }
+
+    /* Tooltip */
+    .tooltip{
+      position:absolute;
+      min-width: 220px;
+      max-width: 300px;
+      background: rgba(255,255,255,.92);
+      border:1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+      padding: 10px 12px;
+      pointer-events: none;
+      transform: translate(-50%, -110%);
+      opacity: 0;
+      transition: opacity .15s ease;
+    }
+    .tooltip.show{ opacity: 1; }
+    .tt-title{ font-weight: 700; display:flex; gap:8px; align-items:center; }
+    .tt-sub{ font-size: 12px; color: var(--muted); margin-top: 6px; line-height:1.35; }
+    .tt-sub b{ color: var(--text); }
+  </style>
 </head>
-
 <body>
-
-  <!-- NAV (passt zu deinem Stil – simpel) -->
-  <header class="nav">
-    <div class="nav__inner">
-      <a class="logo" href="index.html" aria-label="Start">
-        <span class="logo__mark" aria-hidden="true"></span>
-        <span class="logo__text">EcoSupply</span>
-      </a>
-      <div class="nav__links">
-        <a class="nav__link" href="index.html">← Start</a>
-        <span class="nav__sep">/</span>
-        <span class="nav__current">Globus</span>
-      </div>
+  <div class="wrap">
+    <div class="crumb"><a href="/index.html">← Start</a> / <b>Globus</b></div>
+    <h1>Globaler Warenstrom</h1>
+    <div class="sub tip">
+      Interaktiver 3D‑Globus mit typischen Herkunftsregionen von Supermarkt‑Produkten.
+      Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z.&nbsp;B.&nbsp;Banane).
     </div>
-  </header>
 
-  <main class="section section--tight">
-    <div class="container">
-      <div class="section__head">
-        <h1 style="margin:0 0 8px;">Globaler Warenstrom</h1>
-        <p class="muted" style="margin:0;">
-          Interaktiver 3D-Globus mit typischen Herkunftsregionen von Supermarkt-Produkten.
-          Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z.&nbsp;B. Banane).
-        </p>
+    <div class="card">
+      <div class="stage" id="globeStage">
+        <canvas id="globeCanvas" aria-label="3D Globus"></canvas>
+        <div id="globeTooltip" class="tooltip" role="status" aria-live="polite">
+          <div class="tt-title" id="ttTitle">🌍 Pin</div>
+          <div class="tt-sub" id="ttSub">…</div>
+        </div>
       </div>
 
-      <!-- Globe Card -->
-      <div class="callout" style="margin-top:18px;">
-        <div style="
-          width: 100%;
-          border-radius: 16px;
-          overflow: hidden;
-          border: 1px solid rgba(0,0,0,.06);
-          background: rgba(255,255,255,.55);
-        ">
-          <!-- Canvas: globe.js rendert hier rein -->
-          <canvas id="globeCanvas" style="display:block; width:100%; height:560px;"></canvas>
-        </div>
-
-        <!-- Status / Pills -->
-        <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
-          <div class="small muted" id="globeStatus">Status: lädt…</div>
-
-          <span class="pill small" title="Drehen mit Maus/Touch" style="display:inline-flex; gap:8px; align-items:center;">
-            🖱️ drag = drehen
-          </span>
-          <span class="pill small" title="Zoom per Mausrad/Touchpad" style="display:inline-flex; gap:8px; align-items:center;">
-            🔎 scroll = zoomen
-          </span>
-
-          <span class="pill small" id="globeFilterPill">Alle Produkte</span>
+      <div class="bar">
+        <div class="pill"><span class="dot"></span><span id="globeStatus">Status: lädt…</span></div>
+        <div class="pill">🖱️ <span>drag = drehen</span></div>
+        <div class="pill">🔎 <span>scroll = zoomen</span></div>
+        <div class="pill">
+          <span>Filter:</span>
+          <select id="productSelect" aria-label="Produkt auswählen">
+            <option value="">Alle Produkte</option>
+          </select>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 
-  <!-- THREE.JS (MUSS vor globe.js kommen) -->
-  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Data layer (optional, but present in your project) -->
+  <script src="/data.js"></script>
+  <script src="/store.js"></script>
 
-  <!-- Globe Script -->
+  <!-- three.js + controls (matched versions!) -->
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- globe logic -->
   <script src="/globe.js"></script>
-
 </body>
 </html>
