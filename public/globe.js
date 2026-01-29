@@ -119,27 +119,58 @@
     return new THREE.Vector3(x, y, z);
   }
 
+  // High‑contrast emoji badge texture so the fruit is recognizable.
   function makeEmojiTexture(emoji, bg, fg) {
-    const size = 256;
+    const size = 320; // higher res => crisper at distance
     const c = document.createElement("canvas");
     c.width = size;
     c.height = size;
     const ctx = c.getContext("2d");
+    // shadow
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
+    ctx.shadowColor = "rgba(0,0,0,0.28)";
+    ctx.shadowBlur = size * 0.06;
+    ctx.shadowOffsetY = size * 0.02;
+    ctx.fillStyle = "rgba(0,0,0,0.01)";
+    ctx.fill();
+    ctx.restore();
+
     // circle
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size * 0.44, 0, Math.PI * 2);
     ctx.fillStyle = bg;
     ctx.fill();
-    // soft ring
-    ctx.lineWidth = size * 0.06;
-    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+
+    // thick ring (high contrast)
+    ctx.lineWidth = size * 0.075;
+    ctx.strokeStyle = "rgba(255,255,255,0.98)";
     ctx.stroke();
-    // emoji
-    ctx.font = `${Math.floor(size * 0.48)}px system-ui, Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji`;
+
+    // inner ring for separation from background
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size * 0.36, 0, Math.PI * 2);
+    ctx.lineWidth = size * 0.02;
+    ctx.strokeStyle = "rgba(0,0,0,0.10)";
+    ctx.stroke();
+
+    // emoji (bigger + clearer)
+    ctx.font = `${Math.floor(size * 0.64)}px system-ui, Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = fg || "#000";
-    ctx.fillText(emoji || "•", size / 2, size / 2 + 6);
+    // stronger outline + small shadow => readable over any terrain
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.25)";
+    ctx.shadowBlur = size * 0.04;
+    ctx.shadowOffsetY = size * 0.01;
+    ctx.lineWidth = size * 0.018;
+    ctx.strokeStyle = "rgba(255,255,255,0.80)";
+    const textY = size / 2 + 6;
+    ctx.strokeText(emoji || "•", size / 2, textY);
+    ctx.fillText(emoji || "•", size / 2, textY);
+    ctx.restore();
     const tex = new THREE.CanvasTexture(c);
     tex.encoding = THREE.sRGBEncoding;
     tex.needsUpdate = true;
@@ -200,14 +231,16 @@
     const emoji = (productInfo && productInfo.emoji) || pin.emoji || "📍";
     const bg = (productInfo && productInfo.color) || pin.color || "#ff6a3d";
     const tex = makeEmojiTexture(emoji, bg);
-    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true });
+    // depthTest=false so badges don't disappear behind the globe surface at shallow angles
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false });
     const spr = new THREE.Sprite(mat);
 
     const pos = latLonToVector3(pin.lat, pin.lon, R + 0.02);
     spr.position.copy(pos);
 
     // baseline scale (will be adjusted each frame)
-    const baseScale = (activeFilterId === 'all') ? 0.14 : 0.18;
+    const baseScale = (activeFilterId === 'all') ? 0.15 : 0.19;
+    spr.userData.baseScale = baseScale;
     spr.scale.set(baseScale, baseScale, baseScale);
 
     pinsGroup.add(spr);
@@ -471,10 +504,29 @@
   }
 
   function tick() {
-    // keep sprite size readable with zoom
+    // --- Pins: readable, but not overwhelming ---
+    // 1) scale with zoom
+    // 2) hide/fade pins on the back side of the globe (major declutter)
     const dist = camera.position.length();
-    const s = Math.max(0.12, Math.min(0.26, dist * 0.075));
-    for (const spr of sprites) spr.scale.set(s, s, s);
+    // bigger minimum so you can always recognize the fruit icon
+    const baseS = clamp(dist * 0.078, 0.18, 0.34);
+    const camDir = camera.position.clone().normalize();
+    for (const spr of sprites) {
+      const pDir = spr.position.clone().normalize();
+      const dot = pDir.dot(camDir); // 1 = front, 0 = rim, <0 = behind
+      if (dot < 0.05) {
+        spr.visible = false;
+        continue;
+      }
+      spr.visible = true;
+      const rimFade = clamp((dot - 0.05) / 0.25, 0.25, 1);
+      if (spr.material) {
+        spr.material.transparent = true;
+        spr.material.opacity = rimFade;
+      }
+      const s = baseS * (0.85 + 0.35 * rimFade);
+      spr.scale.set(s, s, s);
+    }
 
     if (controls) controls.update();
 
