@@ -115,6 +115,12 @@
       lastUserActionAt = performance.now();
       controls.dragging = false;
     });
+
+    // Mini-debug: immediately show whether OrbitControls is available and flags are set ✅
+    console.log("OrbitControls loaded?", !!THREE.OrbitControls);
+    console.log("controls:", controls);
+    console.log("enableZoom:", controls?.enableZoom, "enableRotate:", controls?.enableRotate, "enabled:", controls?.enabled);
+
   } else {
     setStatus("Hinweis – OrbitControls fehlt (kein Drag/Zoom)");
   }
@@ -575,12 +581,13 @@
     requestAnimationFrame(tick);
   }
 
-  // Dev test: ensure canvas receives scroll/drag events
-  renderer.domElement.addEventListener("wheel", () => {
-    console.log("SCROLL OK");
-  });
+  // Prevent page scroll while zooming (important) + pointer capture (no-op)
+  renderer.domElement.addEventListener("wheel", (e) => {
+    e.preventDefault();
+  }, { passive: false });
+
   renderer.domElement.addEventListener("pointerdown", () => {
-    console.log("DRAG OK");
+    // no-op: ensures pointer events are captured by the canvas
   });
 
   boot();
