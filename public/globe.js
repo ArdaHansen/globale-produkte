@@ -69,13 +69,40 @@
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   camera.position.set(0, 0.12, 3.1);
 
-// Controls (supports BOTH: THREE.OrbitControls and window.OrbitControls)
+// Controls (supports BOTH: THREE.OrbitControls, window.OrbitControls or dynamic ES Module)
 let controls = null;
 let lastUserActionAt = 0;
 
-const OrbitControlsCtor = (THREE && THREE.OrbitControls) ? THREE.OrbitControls : (window.OrbitControls || null);
+async function initControls() {
+  // try existing globals first
+  const tryGetCtor = () => (THREE && THREE.OrbitControls) ? THREE.OrbitControls : (window.OrbitControls || null);
+  let OrbitControlsCtor = tryGetCtor();
 
-if (OrbitControlsCtor) {
+  // dynamic import fallback (ES Module from CDN) for three r150+ (examples moved to jsm)
+  if (!OrbitControlsCtor) {
+    const rev = (THREE && THREE.REVISION) ? THREE.REVISION : null;
+    const version = rev || "0.152.2"; // fallback version
+    const url = `https://cdn.jsdelivr.net/npm/three@${version}/examples/jsm/controls/OrbitControls.js`;
+    try {
+      const mod = await import(url);
+      OrbitControlsCtor = mod.OrbitControls || mod.default || null;
+      if (OrbitControlsCtor) {
+        // attach for future checks
+        window.OrbitControls = OrbitControlsCtor;
+        if (THREE) THREE.OrbitControls = OrbitControlsCtor;
+        console.log("Dynamically loaded OrbitControls from", url);
+      }
+    } catch (e) {
+      console.warn("Dynamic import of OrbitControls failed:", e);
+    }
+  }
+
+  if (!OrbitControlsCtor) {
+    setStatus("FEHLER – OrbitControls nicht geladen (kein Drag/Zoom)");
+    console.warn("OrbitControls missing. Add OrbitControls (legacy or ES Module) before globe.js or enable dynamic import.");
+    return;
+  }
+
   controls = new OrbitControlsCtor(camera, renderer.domElement);
 
   controls.enableDamping = true;
@@ -132,10 +159,7 @@ if (OrbitControlsCtor) {
     lastUserActionAt = performance.now();
   });
 
-  console.log("OrbitControls OK:", OrbitControlsCtor.name || OrbitControlsCtor);
-} else {
-  setStatus("FEHLER – OrbitControls nicht geladen (kein Drag/Zoom)");
-  console.warn("OrbitControls missing. Add OrbitControls.js before globe.js");
+  console.log("OrbitControls initialized:", OrbitControlsCtor.name || OrbitControlsCtor);
 }
 
   // Lights
@@ -549,6 +573,13 @@ if (OrbitControlsCtor) {
     if (initialId && initialId !== "all") {
       const first = pins.find((p) => p.productId === initialId);
       if (first) focusOnLatLon(first.lat, first.lon, 3.15);
+    }
+
+    // Initialize controls (try global, then dynamic ES module fallback)
+    try {
+      await initControls();
+    } catch (e) {
+      console.warn('initControls error', e);
     }
 
     tick();
