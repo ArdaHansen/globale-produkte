@@ -69,61 +69,47 @@
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   camera.position.set(0, 0.12, 3.1);
 
-  // Controls
-  let controls = null;
-  let lastUserActionAt = 0;
-  if (THREE.OrbitControls) {
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
+// Controls (supports BOTH: THREE.OrbitControls and window.OrbitControls)
+let controls = null;
+let lastUserActionAt = 0;
 
-    controls.enablePan = false;
+const OrbitControlsCtor = (THREE && THREE.OrbitControls) ? THREE.OrbitControls : (window.OrbitControls || null);
 
-    controls.enableZoom = true;
-    controls.zoomSpeed = 0.9;
+if (OrbitControlsCtor) {
+  controls = new OrbitControlsCtor(camera, renderer.domElement);
 
-    // Explicitly map mouse buttons for consistent rotate/zoom behavior
-    controls.mouseButtons = {
-      LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.ROTATE
-    };
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
 
-    controls.enableRotate = true;
-    controls.rotateSpeed = 0.6;
+  controls.enablePan = false;
+  controls.enableZoom = true;
+  controls.zoomSpeed = 0.9;
 
-    // Use OrbitControls built-in auto-rotate instead of manually rotating the world
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.35;
+  controls.enableRotate = true;
+  controls.rotateSpeed = 0.6;
 
-    controls.minDistance = 1.8;
-    controls.maxDistance = 6.0;
-    controls.minPolarAngle = 0.15;
-    controls.maxPolarAngle = Math.PI - 0.15;
+  controls.minDistance = 1.8;
+  controls.maxDistance = 6.0;
+  controls.minPolarAngle = 0.15;
+  controls.maxPolarAngle = Math.PI - 0.15;
 
-    controls.addEventListener("start", () => {
-      lastUserActionAt = performance.now();
-      controls.autoRotate = false;
-      controls.dragging = true;
-    });
+  // smooth auto rotate (optional)
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.35;
 
-    controls.addEventListener("change", () => {
-      lastUserActionAt = performance.now();
-    });
+  controls.addEventListener("start", () => {
+    lastUserActionAt = performance.now();
+    controls.autoRotate = false;
+  });
+  controls.addEventListener("end", () => {
+    lastUserActionAt = performance.now();
+  });
 
-    controls.addEventListener("end", () => {
-      lastUserActionAt = performance.now();
-      controls.dragging = false;
-    });
-
-    // Mini-debug: immediately show whether OrbitControls is available and flags are set ✅
-    console.log("OrbitControls loaded?", !!THREE.OrbitControls);
-    console.log("controls:", controls);
-    console.log("enableZoom:", controls?.enableZoom, "enableRotate:", controls?.enableRotate, "enabled:", controls?.enabled);
-
-  } else {
-    setStatus("Hinweis – OrbitControls fehlt (kein Drag/Zoom)");
-  }
+  console.log("OrbitControls OK:", OrbitControlsCtor.name || OrbitControlsCtor);
+} else {
+  setStatus("FEHLER – OrbitControls nicht geladen (kein Drag/Zoom)");
+  console.warn("OrbitControls missing. Add OrbitControls.js before globe.js");
+}
 
   // Lights
   scene.add(new THREE.AmbientLight(0xffffff, 0.95));
@@ -582,7 +568,7 @@
   }
 
   // Prevent page scroll while zooming (important) + pointer capture (no-op)
-  renderer.domElement.addEventListener("wheel", (e) => {
+  canvas.addEventListener("wheel", (e) => {
     e.preventDefault();
   }, { passive: false });
 
