@@ -67,24 +67,41 @@
 
   // Controls
   let controls = null;
+  let lastUserActionAt = 0;
   if (THREE.OrbitControls) {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
+
     controls.enablePan = false;
+
     controls.enableZoom = true;
     controls.zoomSpeed = 0.9;
+
+    controls.enableRotate = true;
     controls.rotateSpeed = 0.6;
+
+    // Use OrbitControls built-in auto-rotate instead of manually rotating the world
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.35;
+
     controls.minDistance = 1.8;
     controls.maxDistance = 6.0;
     controls.minPolarAngle = 0.15;
     controls.maxPolarAngle = Math.PI - 0.15;
 
     controls.addEventListener("start", () => {
+      lastUserActionAt = performance.now();
+      controls.autoRotate = false;
       controls.dragging = true;
     });
 
+    controls.addEventListener("change", () => {
+      lastUserActionAt = performance.now();
+    });
+
     controls.addEventListener("end", () => {
+      lastUserActionAt = performance.now();
       controls.dragging = false;
     });
   } else {
@@ -440,11 +457,7 @@
   window.addEventListener("resize", resize);
 
   // ---- Auto-rotate
-  let lastUserActionAt = 0;
-  if (controls) {
-    controls.addEventListener("start", () => { lastUserActionAt = performance.now(); });
-    controls.addEventListener("change", () => { lastUserActionAt = performance.now(); });
-  }
+  // Auto-rotate is handled by OrbitControls event listeners (see controls setup above).
 
   async function boot() {
     setStatus("lädt...");
@@ -537,13 +550,12 @@
       spr.scale.set(s, s, s);
     }
 
+    // Controls must be updated each frame for damping and auto-rotate functionality
     if (controls) controls.update();
 
     const now = performance.now();
-    const autoRotate = now - lastUserActionAt > 1200;
-    if (autoRotate && !controls?.dragging) {
-      world.rotation.y += 0.0016;
-      glow.rotation.y += 0.0016;
+    if (now - lastUserActionAt > 1200) {
+      if (controls) controls.autoRotate = true;
     }
 
     if (focusAnim) focusAnim();
