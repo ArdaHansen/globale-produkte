@@ -156,7 +156,8 @@
     ctx.stroke();
 
     // emoji (bigger + clearer)
-    ctx.font = `${Math.floor(size * 0.64)}px system-ui, Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji`;
+    // Use emoji-capable fonts first. Avoid forcing bold weights: some systems drop color-emoji in canvas.
+    ctx.font = `${Math.floor(size * 0.68)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Twemoji Mozilla",system-ui,sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = fg || "#000";
