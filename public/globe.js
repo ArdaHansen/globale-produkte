@@ -16,7 +16,8 @@
   const statusEl = document.getElementById("globeStatus");
   const canvas = document.getElementById("globeCanvas");
   const productSelect = document.getElementById("productSelect");
-  const tooltip = document.getElementById("pinTooltip");
+  // Note: HTML uses id="globeTooltip" — ensure we reference that element
+  const tooltip = document.getElementById("globeTooltip");
 
   function setStatus(t) {
     if (statusEl) statusEl.textContent = "Status: " + t;
@@ -57,6 +58,9 @@
   // ---- Scene
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // Ensure the canvas can receive pointer & wheel events (avoid overlay swallowing events)
+  renderer.domElement.style.pointerEvents = "auto";
+  renderer.domElement.style.touchAction = "none";
   // three r152+ uses outputColorSpace; older uses outputEncoding.
   if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
   else renderer.outputEncoding = THREE.sRGBEncoding;
@@ -77,6 +81,13 @@
 
     controls.enableZoom = true;
     controls.zoomSpeed = 0.9;
+
+    // Explicitly map mouse buttons for consistent rotate/zoom behavior
+    controls.mouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,
+      MIDDLE: THREE.MOUSE.DOLLY,
+      RIGHT: THREE.MOUSE.ROTATE
+    };
 
     controls.enableRotate = true;
     controls.rotateSpeed = 0.6;
@@ -563,6 +574,14 @@
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
+
+  // Dev test: ensure canvas receives scroll/drag events
+  renderer.domElement.addEventListener("wheel", () => {
+    console.log("SCROLL OK");
+  });
+  renderer.domElement.addEventListener("pointerdown", () => {
+    console.log("DRAG OK");
+  });
 
   boot();
 })();
