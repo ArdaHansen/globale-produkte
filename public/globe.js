@@ -47,8 +47,10 @@
   dir.position.set(3, 2, 2);
   scene.add(dir);
 
-  const group = new THREE.Group();
-  scene.add(group);
+  // IMPORTANT: globe + atmosphere + pins must share the same parent.
+  // Otherwise the sphere can rotate independently and pins look "fest".
+  const world = new THREE.Group();
+  scene.add(world);
 
   const R = 1.18;
 
@@ -70,7 +72,7 @@
       metalness: 0.05
     })
   );
-  group.add(globe);
+  world.add(globe);
 
   const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(R * 1.03, 96, 96),
@@ -80,10 +82,10 @@
       opacity: 0.06
     })
   );
-  group.add(atmosphere);
+  world.add(atmosphere);
 
   const pinGroup = new THREE.Group();
-  group.add(pinGroup);
+  world.add(pinGroup);
 
   function latLonToVec3(lat, lon, radius) {
     const phi = (90 - lat) * Math.PI / 180;
@@ -181,8 +183,8 @@
 
     focusAnim.active = true;
     focusAnim.t = 0;
-    focusAnim.fromY = group.rotation.y;
-    focusAnim.fromX = group.rotation.x;
+    focusAnim.fromY = world.rotation.y;
+    focusAnim.fromX = world.rotation.x;
     focusAnim.toY = targetRotY;
     focusAnim.toX = targetRotX;
 
@@ -200,8 +202,8 @@
     const p = Math.min(1, focusAnim.t / 0.9);
     const e = 1 - Math.pow(1 - p, 3);
 
-    group.rotation.y = focusAnim.fromY + (focusAnim.toY - focusAnim.fromY) * e;
-    group.rotation.x = focusAnim.fromX + (focusAnim.toX - focusAnim.fromX) * e;
+    world.rotation.y = focusAnim.fromY + (focusAnim.toY - focusAnim.fromY) * e;
+    world.rotation.x = focusAnim.fromX + (focusAnim.toX - focusAnim.fromX) * e;
 
     if (controls) {
       const d = focusAnim.fromD + (focusAnim.toD - focusAnim.fromD) * e;
@@ -256,8 +258,10 @@
     const dt = (now - last) / 1000;
     last = now;
 
-    globe.rotation.y += 0.0016;
-    atmosphere.rotation.y += 0.0016;
+    // Rotate the whole world (globe + pins + atmosphere together)
+    if(!dragging && !focusAnim.active){
+      world.rotation.y += 0.0016;
+    }
 
     raycaster.setFromCamera(mouse, camera);
     const hits = raycaster.intersectObjects(pinGroup.children, false);
@@ -280,5 +284,3 @@
 
   init().then(() => requestAnimationFrame(tick));
 })();
-
-
