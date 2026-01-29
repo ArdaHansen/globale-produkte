@@ -1,9 +1,15 @@
 /*
   Globe (three.js) – Globale Produkte
-  - Pins: /pins.json
+  - Pins: ./pins.json
   - Produktdaten optional: SiteStore.loadAsync() -> /api/site
-  - Interaktiv: Drag = drehen, Scroll = zoomen, Klick = Tooltip
+  - Interaktiv: Drag = drehen, Scroll = zoomen, Klick = Tooltip + Fokus
   - Fokus: /globe.html?id=f03 (z. B. Banane)
+
+  WICHTIG (Fixes):
+  - Entfernt doppelte latLonToVector3 / doppelte fetch() / doppelte Render-Loops
+  - Nur EIN requestAnimationFrame-Loop (tick)
+  - Pins hängen am Earth-Mesh (rotieren korrekt mit dem Globus)
+  - Pfade sind relativ (./textures/earth.jpg, ./pins.json) -> funktioniert auch in Unterordnern
 */
 
 (function () {
@@ -19,6 +25,10 @@
   function qs(name) {
     const u = new URL(location.href);
     return u.searchParams.get(name);
+  }
+
+  function clamp(v, a, b) {
+    return Math.max(a, Math.min(b, v));
   }
 
   // ---- Guards
@@ -47,7 +57,9 @@
   // ---- Scene
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.outputEncoding = THREE.sRGBEncoding;
+  // three r152+ uses outputColorSpace; older uses outputEncoding.
+  if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+  else renderer.outputEncoding = THREE.sRGBEncoding;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
@@ -65,7 +77,6 @@
     controls.rotateSpeed = 0.6;
     controls.minDistance = 1.8;
     controls.maxDistance = 6.0;
-    // smoother limits
     controls.minPolarAngle = 0.15;
     controls.maxPolarAngle = Math.PI - 0.15;
   } else {
@@ -104,13 +115,9 @@
 
   // Pins container as child of earth -> rotates with globe
   const pinsGroup = new THREE.Group();
-  let activeFilterId = "all";
-
   earth.add(pinsGroup);
 
-  // ---- Utils
   function latLonToVector3(lat, lon, radius) {
-    // lat: -90..90, lon: -180..180
     const phi = (90 - lat) * (Math.PI / 180);
     const theta = (lon + 180) * (Math.PI / 180);
     const x = -radius * Math.sin(phi) * Math.cos(theta);
@@ -119,14 +126,15 @@
     return new THREE.Vector3(x, y, z);
   }
 
-  // High‑contrast emoji badge texture so the fruit is recognizable.
+  // High‑contrast emoji badge texture
   function makeEmojiTexture(emoji, bg, fg) {
-    const size = 320; // higher res => crisper at distance
+    const size = 320;
     const c = document.createElement("canvas");
     c.width = size;
     c.height = size;
     const ctx = c.getContext("2d");
-    // shadow
+
+    // soft shadow
     ctx.save();
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size * 0.46, 0, Math.PI * 2);
@@ -140,28 +148,27 @@
     // circle
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size * 0.44, 0, Math.PI * 2);
-    ctx.fillStyle = bg;
+    ctx.fillStyle = bg || "#ff6a3d";
     ctx.fill();
 
-    // thick ring (high contrast)
+    // thick ring
     ctx.lineWidth = size * 0.075;
     ctx.strokeStyle = "rgba(255,255,255,0.98)";
     ctx.stroke();
 
-    // inner ring for separation from background
+    // inner ring
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size * 0.36, 0, Math.PI * 2);
     ctx.lineWidth = size * 0.02;
     ctx.strokeStyle = "rgba(0,0,0,0.10)";
     ctx.stroke();
 
-    // emoji (bigger + clearer)
-    // Use emoji-capable fonts first. Avoid forcing bold weights: some systems drop color-emoji in canvas.
+    // emoji
     ctx.font = `${Math.floor(size * 0.68)}px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Twemoji Mozilla",system-ui,sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = fg || "#000";
-    // stronger outline + small shadow => readable over any terrain
+
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.25)";
     ctx.shadowBlur = size * 0.04;
@@ -172,8 +179,10 @@
     ctx.strokeText(emoji || "•", size / 2, textY);
     ctx.fillText(emoji || "•", size / 2, textY);
     ctx.restore();
+
     const tex = new THREE.CanvasTexture(c);
-    tex.encoding = THREE.sRGBEncoding;
+    if ("colorSpace" in tex) tex.colorSpace = THREE.SRGBColorSpace;
+    else tex.encoding = THREE.sRGBEncoding;
     tex.needsUpdate = true;
     return tex;
   }
@@ -203,9 +212,10 @@
 
   // ---- Data load
   async function loadPins() {
-    const res = await fetch("/pins.json", { cache: "no-store" });
+    const res = await fetch("./pins.json", { cache: "no-store" });
     if (!res.ok) throw new Error("pins.json nicht gefunden");
     const json = await res.json();
+    if (Array.isArray(json)) return json;
     return Array.isArray(json.pins) ? json.pins : [];
   }
 
@@ -222,38 +232,14 @@
   // ---- Pins rendering
   const spriteMeta = new WeakMap();
   const sprites = [];
+  let activeFilterId = "all";
 
   function clearPins() {
     while (pinsGroup.children.length) pinsGroup.remove(pinsGroup.children[0]);
     sprites.length = 0;
   }
 
-  function addPin(pin, productInfo) {
-    const emoji = (productInfo && productInfo.emoji) || pin.emoji || "📍";
-    const bg = (productInfo && productInfo.color) || pin.color || "#ff6a3d";
-    const tex = makeEmojiTexture(emoji, bg);
-    // depthTest=false so badges don't disappear behind the globe surface at shallow angles
-    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false });
-    const spr = new THREE.Sprite(mat);
-
-    const pos = latLonToVector3(pin.lat, pin.lon, R + 0.02);
-    spr.position.copy(pos);
-
-    // baseline scale (will be adjusted each frame)
-    const baseScale = (activeFilterId === 'all') ? 0.15 : 0.19;
-    spr.userData.baseScale = baseScale;
-    spr.scale.set(baseScale, baseScale, baseScale);
-
-    pinsGroup.add(spr);
-    sprites.push(spr);
-    spriteMeta.set(spr, {
-      pin,
-      product: productInfo || { id: pin.productId, title: pin.productTitle, emoji },
-    });
-  }
-
   function colorByProductId(id) {
-    // small palette
     const palette = {
       f01: "#22b356",
       f02: "#ff8a00",
@@ -276,7 +262,6 @@
 
   function buildProductIndex(pins, tiles) {
     const byId = {};
-    // from backend tiles
     if (Array.isArray(tiles)) {
       for (const t of tiles) {
         if (!t || !t.id) continue;
@@ -288,7 +273,6 @@
         };
       }
     }
-    // ensure products that appear in pins
     for (const p of pins) {
       if (!p || !p.productId) continue;
       if (!byId[p.productId]) {
@@ -325,16 +309,36 @@
     productSelect.value = current;
   }
 
-  function renderPins(pins, products, filterId) {
-    activeFilterId = (filterId || 'all');
+  function addPin(pin, productInfo) {
+    const emoji = (productInfo && productInfo.emoji) || pin.emoji || "📍";
+    const bg = (productInfo && productInfo.color) || pin.color || "#ff6a3d";
+    const tex = makeEmojiTexture(emoji, bg);
 
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false });
+    const spr = new THREE.Sprite(mat);
+
+    const pos = latLonToVector3(pin.lat, pin.lon, R + 0.02);
+    spr.position.copy(pos);
+
+    spr.userData.baseScale = activeFilterId === "all" ? 0.18 : 0.22;
+    spr.scale.setScalar(spr.userData.baseScale);
+
+    pinsGroup.add(spr);
+    sprites.push(spr);
+
+    spriteMeta.set(spr, {
+      pin,
+      product: productInfo || { id: pin.productId, title: pin.productTitle, emoji },
+    });
+  }
+
+  function renderPins(pins, products, filterId) {
+    activeFilterId = filterId || "all";
     clearPins();
-    const list = filterId && filterId !== "all" ? pins.filter((p) => p.productId === filterId) : pins;
-    for (const p of list) {
-      const info = products[p.productId];
-      addPin(p, info);
-    }
-    window.__pinSprites = pinsGroup.children.slice();
+
+    const list = activeFilterId !== "all" ? pins.filter((p) => p.productId === activeFilterId) : pins;
+    for (const p of list) addPin(p, products[p.productId]);
+
     setStatus(`bereit ✅ (${list.length} Pins)`);
   }
 
@@ -361,19 +365,15 @@
     };
   }
 
-  // ---- Interaction (Raycast)
+  // ---- Interaction
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   let selectedSprite = null;
 
   function setSelected(sprite) {
-    if (selectedSprite && selectedSprite.material) {
-      selectedSprite.material.opacity = 1;
-    }
+    if (selectedSprite && selectedSprite.material) selectedSprite.material.opacity = 1;
     selectedSprite = sprite;
-    if (selectedSprite && selectedSprite.material) {
-      selectedSprite.material.opacity = 0.95;
-    }
+    if (selectedSprite && selectedSprite.material) selectedSprite.material.opacity = 0.98;
   }
 
   function onPointerDown(ev) {
@@ -382,6 +382,7 @@
     const y = (ev.clientY - rect.top) / rect.height;
     pointer.x = x * 2 - 1;
     pointer.y = -(y * 2 - 1);
+
     raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(sprites, false);
     if (!hits.length) {
@@ -389,10 +390,13 @@
       setSelected(null);
       return;
     }
+
     const spr = hits[0].object;
     setSelected(spr);
+
     const meta = spriteMeta.get(spr);
     if (!meta) return;
+
     const pin = meta.pin;
     const prod = meta.product;
 
@@ -404,12 +408,11 @@
         ${safeText(pin.label || pin.name || "")}
       </div>
       <div style="font-size:11px; opacity:.75; margin-top:4px;">
-        ${pin.lat.toFixed(2)}, ${pin.lon.toFixed(2)}
+        ${Number(pin.lat).toFixed(2)}, ${Number(pin.lon).toFixed(2)}
       </div>
     `;
     showTooltip(html, ev.clientX + 12, ev.clientY + 12);
 
-    // focus smoothly
     focusOnLatLon(pin.lat, pin.lon);
   }
 
@@ -428,34 +431,29 @@
   }
   window.addEventListener("resize", resize);
 
-  // ---- Auto-rotate (pause while interacting)
-  let autoRotate = true;
+  // ---- Auto-rotate
   let lastUserActionAt = 0;
   if (controls) {
-    controls.addEventListener("start", () => {
-      lastUserActionAt = performance.now();
-    });
-    controls.addEventListener("change", () => {
-      lastUserActionAt = performance.now();
-    });
+    controls.addEventListener("start", () => { lastUserActionAt = performance.now(); });
+    controls.addEventListener("change", () => { lastUserActionAt = performance.now(); });
   }
 
-  // ---- Boot
   async function boot() {
     setStatus("lädt...");
     resize();
 
-    // load earth texture with robust error handling
+    // earth texture
     try {
       const earthTex = await new Promise((resolve, reject) => {
         loader.load(
-          "/textures/earth.jpg",
+          "./textures/earth.jpg",
           (t) => resolve(t),
           undefined,
           (err) => reject(err)
         );
       });
-      earthTex.encoding = THREE.sRGBEncoding;
+      if ("colorSpace" in earthTex) earthTex.colorSpace = THREE.SRGBColorSpace;
+      else earthTex.encoding = THREE.sRGBEncoding;
       earthMat.map = earthTex;
       earthMat.needsUpdate = true;
     } catch (e) {
@@ -478,6 +476,7 @@
 
     const initialId = qs("id") || "all";
     if (productSelect) productSelect.value = initialId;
+
     renderPins(pins, products, initialId);
 
     if (productSelect) {
@@ -488,6 +487,7 @@
         if (id && id !== "all") u.searchParams.set("id", id);
         else u.searchParams.delete("id");
         history.replaceState({}, "", u);
+
         renderPins(pins, products, id);
 
         const first = pins.find((p) => (id === "all" ? true : p.productId === id));
@@ -495,7 +495,6 @@
       });
     }
 
-    // focus if id present
     if (initialId && initialId !== "all") {
       const first = pins.find((p) => p.productId === initialId);
       if (first) focusOnLatLon(first.lat, first.lon, 3.15);
@@ -505,35 +504,35 @@
   }
 
   function tick() {
-    // --- Pins: readable, but not overwhelming ---
-    // 1) scale with zoom
-    // 2) hide/fade pins on the back side of the globe (major declutter)
+    // Pin scaling + back-side declutter
     const dist = camera.position.length();
-    // bigger minimum so you can always recognize the fruit icon
     const baseS = clamp(dist * 0.078, 0.18, 0.34);
     const camDir = camera.position.clone().normalize();
+
     for (const spr of sprites) {
       const pDir = spr.position.clone().normalize();
-      const dot = pDir.dot(camDir); // 1 = front, 0 = rim, <0 = behind
+      const dot = pDir.dot(camDir);
+
       if (dot < 0.05) {
         spr.visible = false;
         continue;
       }
       spr.visible = true;
+
       const rimFade = clamp((dot - 0.05) / 0.25, 0.25, 1);
       if (spr.material) {
         spr.material.transparent = true;
         spr.material.opacity = rimFade;
       }
+
       const s = baseS * (0.85 + 0.35 * rimFade);
       spr.scale.set(s, s, s);
     }
 
     if (controls) controls.update();
 
-    // auto-rotate if user idle
     const now = performance.now();
-    autoRotate = now - lastUserActionAt > 1200;
+    const autoRotate = now - lastUserActionAt > 1200;
     if (autoRotate) {
       world.rotation.y += 0.0016;
       glow.rotation.y += 0.0016;
