@@ -45,7 +45,7 @@
     </div>
   </main>
 
-  <!-- ✅ NEU: Globus-Kachel (zusätzlich, ohne bestehende Logik zu verändern) -->
+  <!-- ✅ NEU: Zwei feste Feature-Grids (Globus + Biosiegel) -->
   <section class="section section--tight" id="globus">
     <div class="container">
       <header class="section__head reveal">
@@ -53,7 +53,7 @@
         <p>3D‑Globus mit Herkunftsregionen & Pins. (Drag = drehen, Scroll = zoomen)</p>
       </header>
 
-      <div class="tilegrid reveal" aria-label="Interaktiver Globus">
+      <div class="tilegrid tilegrid--two reveal" aria-label="Interaktive Bereiche">
         <a class="tile tile--wide" href="./globe.html" aria-label="Zum 3D‑Globus">
           <div class="tile__emoji" aria-hidden="true">🌍</div>
           <span class="tile__title">Globaler Warenstrom (3D‑Globus)</span>
@@ -61,7 +61,25 @@
           <span class="tile__short">Pins mit Früchten/Produkten – Filter + Tooltip direkt auf der Karte.</span>
           <span class="tile__tag">Interaktiv</span>
         </a>
+        <a class="tile tile--wide tile--bio" href="./biosiegel.html" aria-label="Zu den Biosiegeln">
+          <div class="tile__emoji" aria-hidden="true">🌱</div>
+          <span class="tile__title">Biosiegel‑Timeline</span>
+          <span class="tile__origin">EU‑Bio • Bio‑Siegel • Demeter • Bioland • Naturland</span>
+          <span class="tile__short">Was bedeuten die Siegel – und welche Standards sind wirklich streng?</span>
+          <span class="tile__tag">Info</span>
+        </a>
       </div>
+    </div>
+  </section>
+
+  <!-- ✅ NEU: Zusätzliche Grids (vom Editor) – Reihenfolge über "order"/Index -->
+  <section class="section section--tight" id="moreGrids" hidden>
+    <div class="container">
+      <header class="section__head reveal">
+        <h2>Mehr</h2>
+        <p>Zusätzliche Inhalte, die im Editor gepflegt werden können.</p>
+      </header>
+      <div class="tilegrid tilegrid--two reveal" id="dynamicGrids" aria-label="Weitere Inhalte"></div>
     </div>
   </section>
 
@@ -124,6 +142,7 @@
         <div class="edtabs">
           <button class="edtab is-active" data-tab="tiles" type="button">Felder (Kacheln)</button>
           <button class="edtab" data-tab="site" type="button">Seitentitel</button>
+          <button class="edtab" data-tab="grids" type="button">Grids (oben)</button>
         </div>
 
         <div class="edpanel" data-panel="tiles">
@@ -151,6 +170,21 @@
           <div class="row" style="margin-top:12px; gap:10px;">
             <button class="btn btn--solid" id="homeSaveSiteBtn" type="button">Speichern</button>
             <button class="btn btn--ghost" id="homeLockBtn2" type="button">Sperren</button>
+          </div>
+        </div>
+
+        <div class="edpanel" data-panel="grids" hidden>
+          <div class="row edrow">
+            <div class="muted small">Diese Grids erscheinen unter den zwei festen Karten (Globus + Biosiegel) und vor den 15 Feldern. Reihenfolge per ↑/↓.</div>
+            <div class="row" style="gap:8px;">
+              <button class="btn btn--ghost" id="homeAddGrid" type="button">+ Grid</button>
+            </div>
+          </div>
+
+          <div class="tileeditor" id="homeGridsWrap"></div>
+
+          <div class="row" style="margin-top:12px; gap:10px;">
+            <button class="btn btn--solid" id="homeSaveGridsBtn" type="button">Speichern</button>
           </div>
         </div>
       </div>

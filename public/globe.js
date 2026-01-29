@@ -17,7 +17,29 @@
   const canvas = document.getElementById("globeCanvas");
   const productSelect = document.getElementById("productSelect");
   // Note: HTML uses id="globeTooltip" — ensure we reference that element
-  const tooltip = document.getElementById("globeTooltip");
+  const tooltip = document.getElementById("globeTooltip") || document.getElementById("pinTooltip");
+  const loaderOverlay = document.getElementById("globeLoader");
+  const loaderBar = loaderOverlay ? loaderOverlay.querySelector(".globeLoader__barFill") : null;
+  const loaderPct = loaderOverlay ? loaderOverlay.querySelector(".globeLoader__pct") : null;
+  const loaderSub = loaderOverlay ? loaderOverlay.querySelector(".globeLoader__sub") : null;
+
+  function setLoader(pct, text){
+    if(!loaderOverlay) return;
+    const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
+    loaderOverlay.style.display = "flex";
+    loaderOverlay.classList.remove("is-hidden");
+    if(loaderBar) loaderBar.style.width = p + "%";
+    if(loaderPct) loaderPct.textContent = p + "%";
+    if(loaderSub && text) loaderSub.textContent = text;
+    const pb = loaderOverlay.querySelector("[role=\"progressbar\"]");
+    if(pb) pb.setAttribute("aria-valuenow", String(p));
+  }
+
+  function hideLoader(){
+    if(!loaderOverlay) return;
+    loaderOverlay.classList.add("is-hidden");
+    setTimeout(() => { if(loaderOverlay) loaderOverlay.style.display = "none"; }, 420);
+  }
 
   function setStatus(t) {
     if (statusEl) statusEl.textContent = "Status: " + t;
@@ -564,9 +586,19 @@ async function initControls() {
   async function boot() {
     setStatus("lädt...");
     resize();
+    setLoader(8, "Initialisiere Szene");
+
+    // controls early so drag/zoom is ready immediately
+    try {
+      await initControls();
+      setLoader(18, "Steuerung bereit");
+    } catch (e) {
+      console.warn('initControls error', e);
+    }
 
     // earth texture
     try {
+      setLoader(32, "Lade Erdtextur");
       const earthTex = await new Promise((resolve, reject) => {
         loader.load(
           "./textures/earth.jpg",
@@ -579,6 +611,7 @@ async function initControls() {
       else earthTex.encoding = THREE.sRGBEncoding;
       earthMat.map = earthTex;
       earthMat.needsUpdate = true;
+      setLoader(55, "Textur angewendet");
     } catch (e) {
       console.warn("earth.jpg konnte nicht geladen werden", e);
       earthMat.color = new THREE.Color(0x0b3d2e);
@@ -586,13 +619,16 @@ async function initControls() {
 
     let pins = [];
     try {
+      setLoader(65, "Lade Pins");
       pins = await loadPins();
+      setLoader(78, "Pins bereit");
     } catch (e) {
       console.error(e);
       setStatus("FEHLER – pins.json fehlt");
       pins = [];
     }
 
+    setLoader(78, "Bereite Daten auf");
     const tiles = await loadTilesFromBackend();
     const products = buildProductIndex(pins, tiles);
     populateDropdown(products, pins);
@@ -601,6 +637,8 @@ async function initControls() {
     if (productSelect) productSelect.value = initialId;
 
     renderPins(pins, products, initialId);
+    setLoader(92, "Render fertig");
+    setLoader(92, "Rendere Globus");
 
     if (productSelect) {
       productSelect.addEventListener("change", () => {
@@ -623,13 +661,14 @@ async function initControls() {
       if (first) focusOnLatLon(first.lat, first.lon, 3.15);
     }
 
-    // Initialize controls (try global, then dynamic ES module fallback)
-    try {
-      await initControls();
-    } catch (e) {
-      console.warn('initControls error', e);
-    }
 
+    // Finish loader
+    setLoader(100, "Fertig");
+    // slight delay so the fill animation is visible
+    window.setTimeout(() => hideLoader(), 180);
+
+    setLoader(100, "Bereit");
+    hideLoader();
     tick();
   }
 

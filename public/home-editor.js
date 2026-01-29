@@ -22,6 +22,11 @@
   const siteSubtitle = document.getElementById("homeSiteSubtitle");
   const saveSiteBtn = document.getElementById("homeSaveSiteBtn");
 
+  // New: additional homepage grids (optional)
+  const gridsWrap = document.getElementById("homeGridsWrap");
+  const addGridBtn = document.getElementById("homeAddGrid");
+  const saveGridsBtn = document.getElementById("homeSaveGridsBtn");
+
   const tabs = Array.from(document.querySelectorAll(".edtab"));
   const panels = Array.from(document.querySelectorAll(".edpanel"));
 
@@ -78,10 +83,15 @@
   function loadModel(){
     const data = SiteStore.load();
     model = structuredClone(data);
+
+    // Ensure optional container exists for additional homepage grids
+    model.site = model.site || {};
+    if(!Array.isArray(model.site.homeGrids)) model.site.homeGrids = [];
     // seed site inputs
     siteTitle.value = model.site?.title || "";
     siteSubtitle.value = model.site?.subtitle || "";
     renderTiles();
+    renderGrids();
   }
 
   function escapeHtml(str){
@@ -153,6 +163,7 @@
           }else if(act === "down" && idx < tiles.length-1){
             const tmp = tiles[idx+1]; tiles[idx+1] = tiles[idx]; tiles[idx] = tmp;
             renderTiles();
+    renderGrids();
           }
         });
       });
@@ -187,6 +198,122 @@
       tilesWrap.appendChild(empty);
     }
   }
+
+  // ---- Additional homepage grids (optional)
+  function newEmptyGrid(){
+    const uid = "g" + Math.random().toString(16).slice(2, 8);
+    return {
+      id: uid,
+      title: "Neues Grid",
+      subtitle: "",
+      href: "./",
+      emoji: "✨",
+      enabled: true
+    };
+  }
+
+  function renderGrids(){
+    if(!gridsWrap) return;
+    const list = Array.isArray(model?.site?.homeGrids) ? model.site.homeGrids : [];
+    gridsWrap.innerHTML = "";
+
+    if(!list.length){
+      gridsWrap.innerHTML = "<div class='muted'>Keine zusätzlichen Grids angelegt. Mit „+ Grid hinzufügen“ kannst du neue erstellen.</div>";
+      return;
+    }
+
+    list.forEach((g, idx) => {
+      const row = document.createElement("div");
+      row.className = "edgrid";
+      row.innerHTML = `
+        <div class="edgrid__top">
+          <div class="edgrid__badge">#${idx+1}</div>
+          <div class="edgrid__actions">
+            <button type="button" class="btn btn--ghost" data-act="up" ${idx===0?"disabled":""}>▲</button>
+            <button type="button" class="btn btn--ghost" data-act="down" ${idx===list.length-1?"disabled":""}>▼</button>
+            <button type="button" class="btn btn--danger" data-act="delete">Löschen</button>
+          </div>
+        </div>
+
+        <label class="field"><span>Emoji / Icon</span>
+          <input type="text" value="${escapeHtml(g.emoji || "✨")}" maxlength="6" data-k="emoji" />
+        </label>
+        <label class="field"><span>Titel</span>
+          <input type="text" value="${escapeHtml(g.title || "")}" data-k="title" />
+        </label>
+        <label class="field"><span>Untertitel</span>
+          <input type="text" value="${escapeHtml(g.subtitle || "")}" data-k="subtitle" />
+        </label>
+        <label class="field"><span>Link (z. B. ./biosiegel.html)</span>
+          <input type="text" value="${escapeHtml(g.href || "./")}" data-k="href" />
+        </label>
+        <label class="check">
+          <input type="checkbox" data-k="enabled" ${g.enabled===false?"":"checked"} />
+          <span>Aktiv</span>
+        </label>
+      `;
+
+      row.addEventListener("input", (ev) => {
+        const t = ev.target;
+        if(!t || !t.getAttribute) return;
+        const k = t.getAttribute("data-k");
+        if(!k) return;
+        if(k === "enabled") list[idx].enabled = !!t.checked;
+        else list[idx][k] = t.value;
+      });
+
+      row.addEventListener("click", (ev) => {
+        const btn = ev.target?.closest?.("button[data-act]");
+        if(!btn) return;
+        const act = btn.getAttribute("data-act");
+        if(act === "delete"){
+          list.splice(idx, 1);
+          renderGrids();
+          return;
+        }
+        if(act === "up" && idx > 0){
+          const tmp = list[idx-1];
+          list[idx-1] = list[idx];
+          list[idx] = tmp;
+          renderGrids();
+          return;
+        }
+        if(act === "down" && idx < list.length-1){
+          const tmp = list[idx+1];
+          list[idx+1] = list[idx];
+          list[idx] = tmp;
+          renderGrids();
+          return;
+        }
+      });
+
+      gridsWrap.appendChild(row);
+    });
+  }
+
+  addGridBtn?.addEventListener("click", () => {
+    if(!unlocked || !model) return;
+    model.site.homeGrids = model.site.homeGrids || [];
+    model.site.homeGrids.push(newEmptyGrid());
+    renderGrids();
+  });
+
+  saveGridsBtn?.addEventListener("click", async () => {
+    if(!unlocked || !model) return;
+    // normalize order/index (optional, but makes the JSON stable)
+    if(Array.isArray(model.site.homeGrids)){
+      model.site.homeGrids.forEach((g,i) => { g.order = i+1; });
+    }
+    try{
+      if(SiteStore.saveAsync) await SiteStore.saveAsync(model);
+      else SiteStore.save(model);
+      document.dispatchEvent(new CustomEvent("site:updated", { detail: model }));
+      toast("Grids gespeichert ✅");
+    }catch(e){
+      console.error(e);
+      toast("Fehler beim Speichern");
+    }
+  });
 
   addTileBtn?.addEventListener("click", () => {
     if(!unlocked || !model) return;

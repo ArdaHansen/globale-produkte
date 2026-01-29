@@ -36,6 +36,53 @@
     document.getElementById("siteHeadline").textContent = data.site?.title || "Globale Produkte";
     document.getElementById("siteSubtitle").textContent = data.site?.subtitle || "";
 
+    // ---- Optional: additional home grids managed by the editor
+    // They render under the two fixed feature cards and above the 15 product tiles.
+    (function renderHomeGrids(){
+      const section = document.getElementById("moreGrids");
+      const gridEl = document.getElementById("moreGridsGrid");
+      if(!section || !gridEl) return;
+
+      const raw = (data?.site?.homeGrids || []);
+      const list = Array.isArray(raw) ? raw.filter(g => g && g.enabled !== false) : [];
+
+      // Sort by explicit order (number) then stable by title
+      list.sort((a,b) => {
+        const ao = (typeof a.order === "number") ? a.order : 9999;
+        const bo = (typeof b.order === "number") ? b.order : 9999;
+        if(ao !== bo) return ao - bo;
+        return String(a.title || "").localeCompare(String(b.title || ""), "de");
+      });
+
+      gridEl.innerHTML = "";
+      if(!list.length){
+        section.hidden = true;
+        return;
+      }
+      section.hidden = false;
+
+      for(const g of list){
+        const a = document.createElement("a");
+        a.className = "tile tile--wide";
+        if(g.variant === "bio") a.classList.add("tile--bio");
+        if(g.variant === "globe") a.classList.add("tile--globe");
+        a.href = g.href || "#";
+        a.setAttribute("aria-label", g.title || "Grid");
+        a.innerHTML = `
+          <div class="tileTop">
+            <div class="emoji">${esc(g.emoji || "✨")}</div>
+            <div>
+              <div class="title">${esc(g.title || "")}</div>
+              <div class="meta">${esc(g.subtitle || "")}</div>
+            </div>
+          </div>
+          <div class="desc">${esc(g.desc || "")}</div>
+          <div class="cta">Öffnen →</div>
+        `;
+        gridEl.appendChild(a);
+      }
+    })();
+
     const grid = document.getElementById("tileGrid");
     grid.innerHTML = "";
 
