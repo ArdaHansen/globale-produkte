@@ -79,6 +79,14 @@
     controls.maxDistance = 6.0;
     controls.minPolarAngle = 0.15;
     controls.maxPolarAngle = Math.PI - 0.15;
+
+    controls.addEventListener("start", () => {
+      controls.dragging = true;
+    });
+
+    controls.addEventListener("end", () => {
+      controls.dragging = false;
+    });
   } else {
     setStatus("Hinweis – OrbitControls fehlt (kein Drag/Zoom)");
   }
@@ -506,12 +514,12 @@
   function tick() {
     // Pin scaling + back-side declutter
     const dist = camera.position.length();
-    const baseS = clamp(dist * 0.078, 0.18, 0.34);
+    const baseS = clamp(dist * 0.08, 0.18, 0.32);
     const camDir = camera.position.clone().normalize();
 
     for (const spr of sprites) {
-      const pDir = spr.position.clone().normalize();
-      const dot = pDir.dot(camDir);
+      const worldPos = spr.getWorldPosition(new THREE.Vector3()).normalize();
+      const dot = worldPos.dot(camDir);
 
       if (dot < 0.05) {
         spr.visible = false;
@@ -533,7 +541,7 @@
 
     const now = performance.now();
     const autoRotate = now - lastUserActionAt > 1200;
-    if (autoRotate) {
+    if (autoRotate && !controls?.dragging) {
       world.rotation.y += 0.0016;
       glow.rotation.y += 0.0016;
     }
