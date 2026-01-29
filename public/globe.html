@@ -4,126 +4,67 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Globus – EcoSupply</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    :root{ --card:#ffffffcc; --ink:#14211b; --muted:#4a5b52; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink);
-      background: radial-gradient(900px 450px at 50% 20%, rgba(34,179,86,.16), rgba(255,255,255,0) 60%),
-                  linear-gradient(180deg, #e9fff5, #f6fffb);
-    }
-    .wrap{ max-width:1100px; margin:0 auto; padding:26px 18px 50px; }
-    .crumb{ font-size:14px; color:var(--muted); margin-bottom:14px; }
-    .crumb a{ color:#5b44d2; text-decoration:none; }
-    h1{ margin:0 0 6px; font-size:52px; letter-spacing:-.02em; }
-    .sub{ margin:0 0 16px; color:var(--muted); max-width:860px; }
-    code{ background:rgba(0,0,0,.06); padding:2px 6px; border-radius:7px; }
-    .card{
-      background:var(--card);
-      border:1px solid rgba(0,0,0,.08);
-      border-radius:16px;
-      padding:18px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.08);
-    }
-    .canvaswrap{
-      border-radius:14px;
-      overflow:hidden;
-      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.25));
-      border:1px solid rgba(0,0,0,.08);
-      height:min(560px, 70vh);
-      position:relative;
-    }
-    #globeCanvas{ width:100%; height:100%; display:block; }
-    .hud{
-      display:flex; gap:10px; flex-wrap:wrap;
-      padding-top:12px; align-items:center;
-      color:var(--muted); font-size:13px;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border:1px solid rgba(0,0,0,.10);
-      border-radius:999px;
-      background:rgba(255,255,255,.7);
-      color:var(--muted);
-    }
-    .dot{ width:8px; height:8px; border-radius:99px; background:#22b356; }
-    .tip{ color:var(--muted); font-size:13px; margin:10px 0 0; }
-    .tooltip{
-      position:absolute;
-      pointer-events:none;
-      transform: translate(-50%, calc(-100% - 10px));
-      background: rgba(20,33,27,.92);
-      color:#fff;
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:13px;
-      line-height:1.25;
-      max-width:260px;
-      box-shadow: 0 12px 35px rgba(0,0,0,.25);
-      opacity:0;
-      transition: opacity .12s ease;
-      z-index:5;
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .tooltip strong{ display:block; font-size:14px; margin-bottom:2px; }
-    .tooltip .small{ opacity:.85; }
-    .tooltip:after{
-      content:"";
-      position:absolute;
-      left:50%; bottom:-7px;
-      transform: translateX(-50%);
-      width:0; height:0;
-      border-left:7px solid transparent;
-      border-right:7px solid transparent;
-      border-top:7px solid rgba(20,33,27,.92);
-    }
+    /* Fallback styles if style.css doesn't include these */
+    .globe-wrap{max-width:1100px;margin:0 auto;padding:0 18px 40px;}
+    .globe-card{background:rgba(255,255,255,.72);border:1px solid rgba(0,0,0,.08);border-radius:18px;
+      box-shadow:0 18px 45px rgba(0,0,0,.10);padding:16px;}
+    .globe-stage{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.55);
+      height:min(62vh, 560px); min-height:420px;}
+    #globeCanvas{width:100%;height:100%;display:block;touch-action:none;}
+    .globe-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-start;margin-top:12px}
+    .chip{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.8);border:1px solid rgba(0,0,0,.08);
+      border-radius:999px;padding:6px 10px;font-size:13px;color:#1f2937}
+    .chip code{background:rgba(0,0,0,.06);padding:2px 6px;border-radius:6px}
+    .dot{width:8px;height:8px;border-radius:50%;}
+    .dot.ok{background:#22c55e}
+    .dot.warn{background:#f59e0b}
+    .dot.err{background:#ef4444}
+    .tip{opacity:.85}
+    .globe-head{margin:26px 0 14px}
+    .globe-head h1{font-size:52px;line-height:1.05;margin:0 0 10px}
+    .globe-head p{margin:0;max-width:860px}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="crumb">← <a href="index.html">Start</a> / <strong>Globus</strong></div>
-    <h1>Globaler Warenstrom</h1>
-    <p class="sub">
-      Interaktiver 3D‑Globus mit typischen Herkunftsregionen von Supermarkt‑Produkten.
-      Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z. B. Banane).
-    </p>
 
-    <section class="card">
-      <div class="canvaswrap" id="globeWrap">
-        <canvas id="globeCanvas" aria-label="Interaktiver Globus"></canvas>
-        <div class="tooltip" id="pinTip" aria-hidden="true"></div>
-      </div>
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" href="index.html" aria-label="Start">
+        <span class="logo__mark" aria-hidden="true"></span>
+        <span class="logo__text">EcoSupply</span>
+      </a>
+    </div>
+  </header>
 
-      <div class="hud" aria-live="polite">
-        <span class="pill"><span class="dot"></span><span id="globeStatus">Status: lädt…</span></span>
-        <span class="pill">🖱️ drag = drehen</span>
-        <span class="pill">🔍 scroll = zoomen</span>
-        <span class="pill" id="globeFilterPill">Alle Produkte</span>
-      </div>
-
-      <p class="tip">
-        Klick auf einen Pin zeigt Details. Von einer Produktseite aus kannst du direkt verlinken:
-        <code>globe.html?id=f03</code>.
+  <main class="globe-wrap">
+    <div class="globe-head">
+      <div class="pill">← <a href="index.html">Start</a> / <strong>Globus</strong></div>
+      <h1>Globaler Warenstrom</h1>
+      <p class="lead">
+        Interaktiver 3D‑Globus mit typischen Herkunftsregionen von Supermarkt‑Produkten.
+        <span class="tip">Tipp: Du kannst ein Produkt direkt fokussieren mit <code>?id=f03</code> (z.&nbsp;B. Banane).</span>
       </p>
-    </section>
-  </div>
+    </div>
 
-  <!-- Three.js + OrbitControls (non-module) -->
-  <script src="https://unpkg.com/three@0.160.1/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.160.1/examples/js/controls/OrbitControls.js"></script>
+    <div class="globe-card">
+      <div class="globe-stage">
+        <canvas id="globeCanvas" aria-label="3D Globus"></canvas>
+      </div>
 
-  <!-- Pins data (embedded) -->
-  <script id="pinsJson" type="application/json"></script>
+      <div class="globe-bar" aria-live="polite">
+        <span class="chip" id="globeStatus"><span class="dot ok"></span>Status: lädt…</span>
+        <span class="chip" id="globeHintDrag">🖱️ drag = drehen</span>
+        <span class="chip" id="globeHintZoom">🔎 scroll = zoomen</span>
+        <span class="chip" id="globeFilterChip">Alle Produkte</span>
+      </div>
+    </div>
+  </main>
 
-  <script>
-    // Embed pins.json into the page (avoids CORS/paths issues)
-    fetch("pins.json", {cache:"no-store"})
-      .then(r => r.ok ? r.text() : Promise.reject())
-      .then(t => document.getElementById("pinsJson").textContent = t)
-      .catch(()=>{ /* globe.js will show error if it can't load pins */ });
-  </script>
+  <!-- three.js (global) + OrbitControls -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
   <!-- Globe logic -->
   <script src="globe.js"></script>

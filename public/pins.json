@@ -1,375 +1,426 @@
-{
-  "version": 1,
-  "products": [
-    {
-      "id": "f01",
-      "emoji": "🥑",
-      "name": "Avocado",
-      "pins": [
-        {
-          "label": "Mexiko (Michoacán)",
-          "lat": 19.2,
-          "lon": -101.9
-        },
-        {
-          "label": "Peru (Lima-Region)",
-          "lat": -12.0,
-          "lon": -76.9
-        },
-        {
-          "label": "Chile (Valparaíso)",
-          "lat": -33.0,
-          "lon": -71.6
-        },
-        {
-          "label": "Spanien (Andalusien)",
-          "lat": 37.4,
-          "lon": -4.5
-        }
-      ]
-    },
-    {
-      "id": "f02",
-      "emoji": "🥭",
-      "name": "Mango",
-      "pins": [
-        {
-          "label": "Indien (Maharashtra)",
-          "lat": 19.8,
-          "lon": 75.3
-        },
-        {
-          "label": "Peru (Piura)",
-          "lat": -5.2,
-          "lon": -80.6
-        },
-        {
-          "label": "Brasilien (Bahia)",
-          "lat": -12.6,
-          "lon": -41.7
-        },
-        {
-          "label": "Westafrika (Senegal)",
-          "lat": 14.5,
-          "lon": -14.4
-        }
-      ]
-    },
-    {
-      "id": "f03",
-      "emoji": "🍌",
-      "name": "Banane",
-      "pins": [
-        {
-          "label": "Ecuador (Guayas)",
-          "lat": -2.2,
-          "lon": -79.9
-        },
-        {
-          "label": "Costa Rica (Limón)",
-          "lat": 10.0,
-          "lon": -83.0
-        },
-        {
-          "label": "Westafrika (Ghana)",
-          "lat": 7.9,
-          "lon": -1.0
-        }
-      ]
-    },
-    {
-      "id": "f04",
-      "emoji": "☕",
-      "name": "Kaffee",
-      "pins": [
-        {
-          "label": "Brasilien (Minas Gerais)",
-          "lat": -18.5,
-          "lon": -46.4
-        },
-        {
-          "label": "Kolumbien (Antioquia)",
-          "lat": 6.4,
-          "lon": -75.7
-        },
-        {
-          "label": "Äthiopien (Oromia)",
-          "lat": 7.0,
-          "lon": 39.0
-        }
-      ]
-    },
-    {
-      "id": "f05",
-      "emoji": "🍫",
-      "name": "Kakaobohnen",
-      "pins": [
-        {
-          "label": "Ghana",
-          "lat": 7.9,
-          "lon": -1.0
-        },
-        {
-          "label": "Côte d’Ivoire",
-          "lat": 7.5,
-          "lon": -5.6
-        },
-        {
-          "label": "Lateinamerika (Ecuador)",
-          "lat": -1.8,
-          "lon": -78.2
-        }
-      ]
-    },
-    {
-      "id": "f06",
-      "emoji": "🍋",
-      "name": "Zitrone",
-      "pins": [
-        {
-          "label": "Spanien (Murcia)",
-          "lat": 38.0,
-          "lon": -1.2
-        },
-        {
-          "label": "Italien (Sizilien)",
-          "lat": 37.6,
-          "lon": 14.0
-        },
-        {
-          "label": "Türkei (Mersin)",
-          "lat": 36.8,
-          "lon": 34.6
-        }
-      ]
-    },
-    {
-      "id": "f07",
-      "emoji": "🍚",
-      "name": "Reis",
-      "pins": [
-        {
-          "label": "Indien (Punjab)",
-          "lat": 31.0,
-          "lon": 75.4
-        },
-        {
-          "label": "China (Yangtze-Delta)",
-          "lat": 31.2,
-          "lon": 121.5
-        },
-        {
-          "label": "Indonesien (Java)",
-          "lat": -7.3,
-          "lon": 110.0
-        }
-      ]
-    },
-    {
-      "id": "f08",
-      "emoji": "🍉",
-      "name": "Wassermelone",
-      "pins": [
-        {
-          "label": "Spanien (Andalusien)",
-          "lat": 37.3,
-          "lon": -5.9
-        },
-        {
-          "label": "Italien (Emilia-Romagna)",
-          "lat": 44.5,
-          "lon": 11.3
-        },
-        {
-          "label": "Griechenland (Peloponnes)",
-          "lat": 37.5,
-          "lon": 22.4
-        },
-        {
-          "label": "Marokko (Souss-Massa)",
-          "lat": 30.4,
-          "lon": -9.6
-        }
-      ]
-    },
-    {
-      "id": "f09",
-      "emoji": "🍅",
-      "name": "Tomaten",
-      "pins": [
-        {
-          "label": "Spanien (Almería)",
-          "lat": 36.83,
-          "lon": -2.45
-        },
-        {
-          "label": "Italien (Kampanien)",
-          "lat": 40.9,
-          "lon": 14.3
-        },
-        {
-          "label": "Niederlande (Westland)",
-          "lat": 52.0,
-          "lon": 4.2
-        },
-        {
-          "label": "Marokko (Agadir)",
-          "lat": 30.4,
-          "lon": -9.6
-        }
-      ]
-    },
-    {
-      "id": "f10",
-      "emoji": "🍇",
-      "name": "Weintrauben",
-      "pins": [
-        {
-          "label": "Italien (Apulien)",
-          "lat": 41.1,
-          "lon": 16.9
-        },
-        {
-          "label": "Spanien (Valencia)",
-          "lat": 39.5,
-          "lon": -0.4
-        },
-        {
-          "label": "Südafrika (Western Cape)",
-          "lat": -33.9,
-          "lon": 18.5
-        },
-        {
-          "label": "Chile (Central Valley)",
-          "lat": -34.2,
-          "lon": -70.7
-        }
-      ]
-    },
-    {
-      "id": "f11",
-      "emoji": "🥭",
-      "name": "Papaya",
-      "pins": [
-        {
-          "label": "Mexiko (Chiapas)",
-          "lat": 16.7,
-          "lon": -92.6
-        },
-        {
-          "label": "Brasilien (Espírito Santo)",
-          "lat": -19.0,
-          "lon": -40.6
-        },
-        {
-          "label": "Indien (Tamil Nadu)",
-          "lat": 11.1,
-          "lon": 78.7
-        }
-      ]
-    },
-    {
-      "id": "f12",
-      "emoji": "🥒",
-      "name": "Gurken",
-      "pins": [
-        {
-          "label": "Spanien (Almería)",
-          "lat": 36.83,
-          "lon": -2.45
-        },
-        {
-          "label": "Niederlande (Westland)",
-          "lat": 52.0,
-          "lon": 4.2
-        },
-        {
-          "label": "Deutschland (Niedersachsen)",
-          "lat": 52.7,
-          "lon": 9.3
-        }
-      ]
-    },
-    {
-      "id": "f13",
-      "emoji": "🍈",
-      "name": "Pomelo",
-      "pins": [
-        {
-          "label": "China (Guangxi)",
-          "lat": 23.8,
-          "lon": 108.3
-        },
-        {
-          "label": "Thailand (Nakhon Pathom)",
-          "lat": 13.8,
-          "lon": 100.0
-        },
-        {
-          "label": "Malaysia (Perak)",
-          "lat": 4.7,
-          "lon": 101.1
-        },
-        {
-          "label": "Israel (Küstenebene)",
-          "lat": 32.1,
-          "lon": 34.8
-        }
-      ]
-    },
-    {
-      "id": "f14",
-      "emoji": "🍎",
-      "name": "Granatapfel",
-      "pins": [
-        {
-          "label": "Türkei (Antalya)",
-          "lat": 36.9,
-          "lon": 30.7
-        },
-        {
-          "label": "Iran (Fars)",
-          "lat": 29.6,
-          "lon": 52.5
-        },
-        {
-          "label": "Irak (Diyala)",
-          "lat": 33.8,
-          "lon": 44.3
-        },
-        {
-          "label": "Kaukasus (Dagestan)",
-          "lat": 42.1,
-          "lon": 47.5
-        }
-      ]
-    },
-    {
-      "id": "f15",
-      "emoji": "🍬",
-      "name": "Zucker",
-      "pins": [
-        {
-          "label": "Brasilien (São Paulo – Zuckerrohr)",
-          "lat": -22.2,
-          "lon": -48.6
-        },
-        {
-          "label": "Indien (Uttar Pradesh – Zuckerrohr)",
-          "lat": 26.8,
-          "lon": 80.9
-        },
-        {
-          "label": "Deutschland (Niedersachsen – Zuckerrübe)",
-          "lat": 52.6,
-          "lon": 10.5
-        },
-        {
-          "label": "Frankreich (Hauts-de-France – Zuckerrübe)",
-          "lat": 50.3,
-          "lon": 2.9
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "productId": "f01",
+    "product": "Avocado",
+    "emoji": "🥑",
+    "name": "Mexiko (Michoacán)",
+    "lat": 19.2,
+    "lon": -101.9
+  },
+  {
+    "productId": "f01",
+    "product": "Avocado",
+    "emoji": "🥑",
+    "name": "Peru (Lima-Region)",
+    "lat": -12.0,
+    "lon": -76.9
+  },
+  {
+    "productId": "f01",
+    "product": "Avocado",
+    "emoji": "🥑",
+    "name": "Chile (Valparaíso)",
+    "lat": -33.0,
+    "lon": -71.6
+  },
+  {
+    "productId": "f01",
+    "product": "Avocado",
+    "emoji": "🥑",
+    "name": "Spanien (Andalusien)",
+    "lat": 37.4,
+    "lon": -4.5
+  },
+  {
+    "productId": "f02",
+    "product": "Mango",
+    "emoji": "🥭",
+    "name": "Indien (Maharashtra)",
+    "lat": 19.8,
+    "lon": 75.3
+  },
+  {
+    "productId": "f02",
+    "product": "Mango",
+    "emoji": "🥭",
+    "name": "Peru (Piura)",
+    "lat": -5.2,
+    "lon": -80.6
+  },
+  {
+    "productId": "f02",
+    "product": "Mango",
+    "emoji": "🥭",
+    "name": "Brasilien (Bahia)",
+    "lat": -12.6,
+    "lon": -41.7
+  },
+  {
+    "productId": "f02",
+    "product": "Mango",
+    "emoji": "🥭",
+    "name": "Westafrika (Senegal)",
+    "lat": 14.5,
+    "lon": -14.4
+  },
+  {
+    "productId": "f03",
+    "product": "Banane",
+    "emoji": "🍌",
+    "name": "Ecuador (Guayas)",
+    "lat": -2.2,
+    "lon": -79.9
+  },
+  {
+    "productId": "f03",
+    "product": "Banane",
+    "emoji": "🍌",
+    "name": "Costa Rica (Limón)",
+    "lat": 10.0,
+    "lon": -83.0
+  },
+  {
+    "productId": "f03",
+    "product": "Banane",
+    "emoji": "🍌",
+    "name": "Westafrika (Ghana)",
+    "lat": 7.9,
+    "lon": -1.0
+  },
+  {
+    "productId": "f04",
+    "product": "Kaffeebohne",
+    "emoji": "☕",
+    "name": "Brasilien (Minas Gerais)",
+    "lat": -18.5,
+    "lon": -44.0
+  },
+  {
+    "productId": "f04",
+    "product": "Kaffeebohne",
+    "emoji": "☕",
+    "name": "Kolumbien (Antioquia)",
+    "lat": 6.5,
+    "lon": -75.6
+  },
+  {
+    "productId": "f04",
+    "product": "Kaffeebohne",
+    "emoji": "☕",
+    "name": "Äthiopien (Oromia)",
+    "lat": 8.5,
+    "lon": 39.5
+  },
+  {
+    "productId": "f04",
+    "product": "Kaffeebohne",
+    "emoji": "☕",
+    "name": "Vietnam (Đắk Lắk)",
+    "lat": 12.7,
+    "lon": 108.1
+  },
+  {
+    "productId": "f05",
+    "product": "Kakaobohnen",
+    "emoji": "🍫",
+    "name": "Ghana",
+    "lat": 7.9,
+    "lon": -1.0
+  },
+  {
+    "productId": "f05",
+    "product": "Kakaobohnen",
+    "emoji": "🍫",
+    "name": "Côte d’Ivoire",
+    "lat": 7.5,
+    "lon": -5.6
+  },
+  {
+    "productId": "f05",
+    "product": "Kakaobohnen",
+    "emoji": "🍫",
+    "name": "Ecuador",
+    "lat": -1.8,
+    "lon": -78.2
+  },
+  {
+    "productId": "f06",
+    "product": "Zitrone",
+    "emoji": "🍋",
+    "name": "Spanien (Murcia)",
+    "lat": 38.0,
+    "lon": -1.2
+  },
+  {
+    "productId": "f06",
+    "product": "Zitrone",
+    "emoji": "🍋",
+    "name": "Italien (Sizilien)",
+    "lat": 37.6,
+    "lon": 14.0
+  },
+  {
+    "productId": "f06",
+    "product": "Zitrone",
+    "emoji": "🍋",
+    "name": "Türkei (Mersin)",
+    "lat": 36.8,
+    "lon": 34.6
+  },
+  {
+    "productId": "f07",
+    "product": "Reis",
+    "emoji": "🍚",
+    "name": "Indien (Punjab)",
+    "lat": 31.0,
+    "lon": 75.4
+  },
+  {
+    "productId": "f07",
+    "product": "Reis",
+    "emoji": "🍚",
+    "name": "China (Yangtze-Delta)",
+    "lat": 31.2,
+    "lon": 121.5
+  },
+  {
+    "productId": "f07",
+    "product": "Reis",
+    "emoji": "🍚",
+    "name": "Indonesien (Java)",
+    "lat": -7.3,
+    "lon": 110.0
+  },
+  {
+    "productId": "f08",
+    "product": "Wassermelone",
+    "emoji": "🍉",
+    "name": "Spanien (Andalusien)",
+    "lat": 37.3,
+    "lon": -5.9
+  },
+  {
+    "productId": "f08",
+    "product": "Wassermelone",
+    "emoji": "🍉",
+    "name": "Italien (Emilia-Romagna)",
+    "lat": 44.5,
+    "lon": 11.3
+  },
+  {
+    "productId": "f08",
+    "product": "Wassermelone",
+    "emoji": "🍉",
+    "name": "Griechenland (Peloponnes)",
+    "lat": 37.5,
+    "lon": 22.4
+  },
+  {
+    "productId": "f08",
+    "product": "Wassermelone",
+    "emoji": "🍉",
+    "name": "Marokko (Souss-Massa)",
+    "lat": 30.4,
+    "lon": -9.6
+  },
+  {
+    "productId": "f09",
+    "product": "Tomaten",
+    "emoji": "🍅",
+    "name": "Spanien (Almería)",
+    "lat": 36.83,
+    "lon": -2.45
+  },
+  {
+    "productId": "f09",
+    "product": "Tomaten",
+    "emoji": "🍅",
+    "name": "Italien (Kampanien)",
+    "lat": 40.9,
+    "lon": 14.3
+  },
+  {
+    "productId": "f09",
+    "product": "Tomaten",
+    "emoji": "🍅",
+    "name": "Niederlande (Westland)",
+    "lat": 52.0,
+    "lon": 4.2
+  },
+  {
+    "productId": "f09",
+    "product": "Tomaten",
+    "emoji": "🍅",
+    "name": "Marokko (Agadir)",
+    "lat": 30.4,
+    "lon": -9.6
+  },
+  {
+    "productId": "f10",
+    "product": "Weintrauben",
+    "emoji": "🍇",
+    "name": "Italien (Apulien)",
+    "lat": 41.1,
+    "lon": 16.9
+  },
+  {
+    "productId": "f10",
+    "product": "Weintrauben",
+    "emoji": "🍇",
+    "name": "Spanien (Valencia)",
+    "lat": 39.5,
+    "lon": -0.4
+  },
+  {
+    "productId": "f10",
+    "product": "Weintrauben",
+    "emoji": "🍇",
+    "name": "Südafrika (Western Cape)",
+    "lat": -33.9,
+    "lon": 18.5
+  },
+  {
+    "productId": "f10",
+    "product": "Weintrauben",
+    "emoji": "🍇",
+    "name": "Chile (Central Valley)",
+    "lat": -34.2,
+    "lon": -70.7
+  },
+  {
+    "productId": "f11",
+    "product": "Papaya",
+    "emoji": "🥭",
+    "name": "Mexiko (Chiapas)",
+    "lat": 16.8,
+    "lon": -92.6
+  },
+  {
+    "productId": "f11",
+    "product": "Papaya",
+    "emoji": "🥭",
+    "name": "Brasilien (Espírito Santo)",
+    "lat": -19.5,
+    "lon": -40.6
+  },
+  {
+    "productId": "f11",
+    "product": "Papaya",
+    "emoji": "🥭",
+    "name": "Indien (Tamil Nadu)",
+    "lat": 11.1,
+    "lon": 78.7
+  },
+  {
+    "productId": "f12",
+    "product": "Gurken",
+    "emoji": "🥒",
+    "name": "Deutschland (Niedersachsen)",
+    "lat": 52.7,
+    "lon": 9.3
+  },
+  {
+    "productId": "f12",
+    "product": "Gurken",
+    "emoji": "🥒",
+    "name": "Spanien (Andalusien)",
+    "lat": 37.3,
+    "lon": -5.9
+  },
+  {
+    "productId": "f12",
+    "product": "Gurken",
+    "emoji": "🥒",
+    "name": "Niederlande (Westland)",
+    "lat": 52.0,
+    "lon": 4.2
+  },
+  {
+    "productId": "f13",
+    "product": "Pomelo",
+    "emoji": "🍈",
+    "name": "China (Guangxi)",
+    "lat": 23.8,
+    "lon": 108.3
+  },
+  {
+    "productId": "f13",
+    "product": "Pomelo",
+    "emoji": "🍈",
+    "name": "Thailand (Nakhon Pathom)",
+    "lat": 13.8,
+    "lon": 100.1
+  },
+  {
+    "productId": "f13",
+    "product": "Pomelo",
+    "emoji": "🍈",
+    "name": "Malaysia (Perak)",
+    "lat": 4.8,
+    "lon": 100.9
+  },
+  {
+    "productId": "f13",
+    "product": "Pomelo",
+    "emoji": "🍈",
+    "name": "Israel (Küstenebene)",
+    "lat": 32.2,
+    "lon": 34.9
+  },
+  {
+    "productId": "f14",
+    "product": "Granatapfel",
+    "emoji": "🍎",
+    "name": "Türkei (Antalya)",
+    "lat": 36.9,
+    "lon": 30.7
+  },
+  {
+    "productId": "f14",
+    "product": "Granatapfel",
+    "emoji": "🍎",
+    "name": "Iran (Fars)",
+    "lat": 29.6,
+    "lon": 52.5
+  },
+  {
+    "productId": "f14",
+    "product": "Granatapfel",
+    "emoji": "🍎",
+    "name": "Irak (Kurdistan)",
+    "lat": 36.2,
+    "lon": 44.0
+  },
+  {
+    "productId": "f14",
+    "product": "Granatapfel",
+    "emoji": "🍎",
+    "name": "Dagestan (Kaukasus)",
+    "lat": 42.9,
+    "lon": 47.5
+  },
+  {
+    "productId": "f15",
+    "product": "Zucker",
+    "emoji": "🍬",
+    "name": "Brasilien (São Paulo – Zuckerrohr)",
+    "lat": -23.5,
+    "lon": -46.6
+  },
+  {
+    "productId": "f15",
+    "product": "Zucker",
+    "emoji": "🍬",
+    "name": "Indien (Uttar Pradesh – Zuckerrohr)",
+    "lat": 26.8,
+    "lon": 80.9
+  },
+  {
+    "productId": "f15",
+    "product": "Zucker",
+    "emoji": "🍬",
+    "name": "Deutschland (Sachsen-Anhalt – Zuckerrübe)",
+    "lat": 52.0,
+    "lon": 11.7
+  }
+]
