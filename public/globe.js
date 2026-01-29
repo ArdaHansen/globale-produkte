@@ -85,6 +85,33 @@ if (OrbitControlsCtor) {
   controls.enableZoom = true;
   controls.zoomSpeed = 0.9;
 
+  // Mouse button mapping – use THREE constants when available, otherwise try OrbitControls ctor
+  const mouseConst = (THREE && THREE.MOUSE) ? THREE.MOUSE : (OrbitControlsCtor.MOUSE || null);
+  if (mouseConst) {
+    try {
+      controls.mouseButtons = {
+        LEFT: mouseConst.LEFT ?? mouseConst.ROTATE ?? 0,
+        MIDDLE: mouseConst.MIDDLE ?? mouseConst.DOLLY ?? 1,
+        RIGHT: mouseConst.RIGHT ?? mouseConst.ROTATE ?? 2
+      };
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  // Touch mapping (for pinch/drag)
+  const touchConst = (THREE && THREE.TOUCH) ? THREE.TOUCH : (OrbitControlsCtor.TOUCH || null);
+  if (touchConst) {
+    try {
+      controls.touches = {
+        ONE: touchConst.ONE ?? touchConst.ROTATE ?? 0,
+        TWO: touchConst.TWO ?? touchConst.DOLLY_PAN ?? 1
+      };
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
   controls.enableRotate = true;
   controls.rotateSpeed = 0.6;
 
