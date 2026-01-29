@@ -80,20 +80,68 @@ async function initControls() {
 
   // dynamic import fallback (ES Module from CDN) for three r150+ (examples moved to jsm)
   if (!OrbitControlsCtor) {
-    const rev = (THREE && THREE.REVISION) ? THREE.REVISION : null;
-    const version = rev || "0.152.2"; // fallback version
-    const url = `https://cdn.jsdelivr.net/npm/three@${version}/examples/jsm/controls/OrbitControls.js`;
+    // Derive a sensible semver-like version from THREE.REVISION when possible
+    let version = '0.152.2'; // safe default
     try {
-      const mod = await import(url);
-      OrbitControlsCtor = mod.OrbitControls || mod.default || null;
-      if (OrbitControlsCtor) {
-        // attach for future checks
-        window.OrbitControls = OrbitControlsCtor;
-        if (THREE) THREE.OrbitControls = OrbitControlsCtor;
-        console.log("Dynamically loaded OrbitControls from", url);
+      const rev = (THREE && THREE.REVISION) ? String(THREE.REVISION) : '';
+      if (rev) {
+        if (/^\d+$/.test(rev)) {
+          // e.g. '152' -> '0.152.0'
+          version = `0.${rev}.0`;
+        } else if (/^\d+\.\d+\.\d+$/.test(rev)) {
+          version = rev;
+        } else {
+          // fallback to default if format unexpected
+          version = `0.${rev}`;
+        }
       }
-    } catch (e) {
-      console.warn("Dynamic import of OrbitControls failed:", e);
+    } catch (err) {
+      // ignore and keep default
+    }
+
+    const urlsToTry = [
+      `https://cdn.jsdelivr.net/npm/three@${version}/examples/jsm/controls/OrbitControls.js`,
+      `https://unpkg.com/three@${version}/examples/jsm/controls/OrbitControls.js`,
+      // final fallback to a known good version
+      `https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/controls/OrbitControls.js`
+    ];
+
+    let loaded = false;
+    for (const url of urlsToTry) {
+      try {
+        const mod = await import(url);
+        OrbitControlsCtor = mod.OrbitControls || mod.default || null;
+        if (OrbitControlsCtor) {
+          window.OrbitControls = OrbitControlsCtor;
+          if (THREE) THREE.OrbitControls = OrbitControlsCtor;
+          console.log("Dynamically loaded OrbitControls from", url);
+          loaded = true;
+          break;
+        }
+      } catch (e) {
+        console.warn("Dynamic import failed for", url, e);
+      }
+    }
+
+    if (!loaded) {
+      // Last-resort: load legacy (non-module) OrbitControls script via <script> tag
+      const legacyUrl = `https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js`;
+      try {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = legacyUrl;
+          s.onload = resolve;
+          s.onerror = () => reject(new Error('script failed to load: ' + legacyUrl));
+          document.head.appendChild(s);
+        });
+        OrbitControlsCtor = (THREE && THREE.OrbitControls) ? THREE.OrbitControls : (window.OrbitControls || null);
+        if (OrbitControlsCtor) {
+          console.log('Loaded legacy OrbitControls script', legacyUrl);
+          loaded = true;
+        }
+      } catch (e) {
+        console.warn('Loading legacy OrbitControls script failed:', e);
+      }
     }
   }
 
