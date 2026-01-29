@@ -1,56 +1,64 @@
-(function () {
+(function(){
   const statusEl = document.getElementById("globeStatus");
   const canvas = document.getElementById("globeCanvas");
-  const tooltip = document.getElementById("globeTooltip");
+  const tipEl = document.getElementById("pinTip");
+  const filterPill = document.getElementById("globeFilterPill");
 
-  function setStatus(t) { if (statusEl) statusEl.textContent = "Status: " + t; }
-  function setHint(t) { const el = document.getElementById("globeHint"); if (el) el.textContent = t || ""; }
+  function setStatus(t){ if(statusEl) statusEl.textContent = "Status: " + t; }
+  function setFilterLabel(text){ if(filterPill) filterPill.textContent = text; }
 
-  if (!canvas) { console.error("globeCanvas missing"); return; }
-  if (!window.THREE) { setStatus("FEHLER – three.js wurde nicht geladen (THREE fehlt)."); return; }
-  if (!THREE.WebGLRenderer) { setStatus("FEHLER – WebGLRenderer fehlt (three.js unvollständig)."); return; }
+  if(!window.THREE){ setStatus("FEHLER – three.js nicht geladen"); return; }
+  if(!canvas){ console.error("globeCanvas fehlt"); return; }
 
-  try {
-    const test = document.createElement("canvas");
-    const gl = test.getContext("webgl") || test.getContext("experimental-webgl");
-    if (!gl) { setStatus("FEHLER – WebGL ist deaktiviert/nicht verfügbar."); return; }
-  } catch (e) { setStatus("FEHLER – WebGL Check fehlgeschlagen."); return; }
+  // load pins JSON (embedded in page)
+  async function loadPins(){
+    const embedded = document.getElementById("pinsJson");
+    if(embedded && embedded.textContent && embedded.textContent.trim().startsWith("{")){
+      return JSON.parse(embedded.textContent);
+    }
+    const res = await fetch("pins.json", {cache:"no-store"});
+    if(!res.ok) throw new Error("pins.json not found");
+    return await res.json();
+  }
 
   const params = new URLSearchParams(location.search);
-  const focusId = params.get("id");
-  const focusPinIndex = Number(params.get("pin") || "0");
+  const focusId = (params.get("id") || "").trim();
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0.15, 3.2);
+  camera.position.set(0, 0.0, 3.2);
 
   let controls = null;
-  if (THREE.OrbitControls) {
+  if(THREE.OrbitControls){
     controls = new THREE.OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.enablePan = false;
-    controls.minDistance = 2.0;
-    controls.maxDistance = 6.0;
-    controls.rotateSpeed = 0.6;
-    controls.zoomSpeed = 1.0;
-  } else {
-    setHint("Hinweis: OrbitControls fehlen – nur Auto-Rotation.");
+    controls.enableZoom = true;
+    controls.minDistance = 2.1;
+    controls.maxDistance = 7.0;
+    controls.rotateSpeed = 0.55;
+    controls.zoomSpeed = 0.9;
   }
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-  const dir = new THREE.DirectionalLight(0xffffff, 0.85);
-  dir.position.set(3, 2, 2);
-  scene.add(dir);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 1.0);
+  key.position.set(3, 2, 2);
+  scene.add(key);
 
-  // IMPORTANT: globe + atmosphere + pins must share the same parent.
-  // Otherwise the sphere can rotate independently and pins look "fest".
-  const world = new THREE.Group();
-  scene.add(world);
+  const rim = new THREE.DirectionalLight(0x9fffe3, 0.25);
+  rim.position.set(-3, 0.5, -2);
+  scene.add(rim);
+
+  const root = new THREE.Group();
+  scene.add(root);
+
+  const globeGroup = new THREE.Group();
+  root.add(globeGroup);
 
   const R = 1.18;
 
@@ -59,228 +67,220 @@
     "/textures/earth.jpg",
     () => {},
     undefined,
-    () => { console.warn("earth texture failed to load: /textures/earth.jpg"); }
+    (err) => {
+      console.error("Texture load error:", err);
+      setStatus("FEHLER – earth.jpg nicht gefunden (public/textures/earth.jpg)");
+    }
   );
   earthTex.colorSpace = THREE.SRGBColorSpace;
   earthTex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
   const globe = new THREE.Mesh(
-    new THREE.SphereGeometry(R, 96, 96),
-    new THREE.MeshStandardMaterial({
-      map: earthTex,
-      roughness: 0.95,
-      metalness: 0.05
-    })
+    new THREE.SphereGeometry(R, 128, 128),
+    new THREE.MeshStandardMaterial({ map: earthTex, roughness: 1.0, metalness: 0.0 })
   );
-  world.add(globe);
+  globeGroup.add(globe);
 
-  const atmosphere = new THREE.Mesh(
-    new THREE.SphereGeometry(R * 1.03, 96, 96),
-    new THREE.MeshBasicMaterial({
-      color: 0x7fffd4,
-      transparent: true,
-      opacity: 0.06
-    })
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(R * 1.02, 64, 64),
+    new THREE.MeshBasicMaterial({ color: 0x46f7c5, transparent:true, opacity: 0.06 })
   );
-  world.add(atmosphere);
+  globeGroup.add(glow);
 
-  const pinGroup = new THREE.Group();
-  world.add(pinGroup);
+  const pinsGroup = new THREE.Group();
+  globeGroup.add(pinsGroup);
 
-  function latLonToVec3(lat, lon, radius) {
-    const phi = (90 - lat) * Math.PI / 180;
-    const theta = (lon + 180) * Math.PI / 180;
-    const x = -radius * Math.sin(phi) * Math.cos(theta);
-    const z =  radius * Math.sin(phi) * Math.sin(theta);
-    const y =  radius * Math.cos(phi);
+  function latLonToVec3(lat, lon, radius){
+    const phi = THREE.MathUtils.degToRad(90 - lat);
+    const theta = THREE.MathUtils.degToRad(lon + 180);
+    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+    const z =  (radius * Math.sin(phi) * Math.sin(theta));
+    const y =  (radius * Math.cos(phi));
     return new THREE.Vector3(x, y, z);
   }
 
-  function createPinMesh() {
-    const geom = new THREE.ConeGeometry(0.028, 0.12, 16);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xff5a3d, roughness: 0.6, metalness: 0.0 });
-    return new THREE.Mesh(geom, mat);
+  function makePinMesh(color){
+    const h = 0.13;
+    const r = 0.028;
+    const geo = new THREE.ConeGeometry(r, h, 14, 1);
+    geo.translate(0, h/2, 0);
+    const mat = new THREE.MeshStandardMaterial({ color, roughness:0.55, metalness:0.05 });
+    return new THREE.Mesh(geo, mat);
   }
 
-  function addPin(lat, lon, label, productId) {
-    const pos = latLonToVec3(lat, lon, R + 0.03);
-    const pin = createPinMesh();
-    pin.position.copy(pos);
-    pin.lookAt(latLonToVec3(lat, lon, R + 0.25));
-    pin.userData = { label, lat, lon, productId };
-    pinGroup.add(pin);
-    return pin;
+  function clearPins(){
+    for(const c of [...pinsGroup.children]){
+      pinsGroup.remove(c);
+      c.geometry?.dispose?.();
+      if(c.material){
+        if(Array.isArray(c.material)) c.material.forEach(m=>m.dispose?.());
+        else c.material.dispose?.();
+      }
+    }
   }
 
   const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2(-10, -10);
-  let hovered = null;
+  const mouse = new THREE.Vector2(999, 999);
+  let isPointerDown = false;
 
-  function onPointerMove(ev) {
+  canvas.addEventListener("pointerdown", ()=>{ isPointerDown = true; }, {passive:true});
+  window.addEventListener("pointerup", ()=>{ isPointerDown = false; }, {passive:true});
+
+  function showTip(x, y, title, subtitle){
+    if(!tipEl) return;
+    tipEl.style.left = x + "px";
+    tipEl.style.top = y + "px";
+    tipEl.innerHTML = `<strong>${title}</strong><div class="small">${subtitle}</div>`;
+    tipEl.style.opacity = "1";
+    tipEl.setAttribute("aria-hidden","false");
+  }
+  function hideTip(){
+    if(!tipEl) return;
+    tipEl.style.opacity = "0";
+    tipEl.setAttribute("aria-hidden","true");
+  }
+
+  function getCanvasRelativeXY(ev){
     const rect = canvas.getBoundingClientRect();
-    const x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = -(((ev.clientY - rect.top) / rect.height) * 2 - 1);
-    mouse.set(x, y);
-    window.__lastMouseEvent = ev;
+    return { x: ev.clientX - rect.left, y: ev.clientY - rect.top, rect };
   }
-  canvas.addEventListener("pointermove", onPointerMove, { passive: true });
 
-  function showTooltip(ev, text) {
-    if (!tooltip) return;
-    tooltip.style.display = "block";
-    tooltip.textContent = text;
-    tooltip.style.left = (ev.clientX + 12) + "px";
-    tooltip.style.top = (ev.clientY + 12) + "px";
+  function updateRayFromEvent(ev){
+    const {x,y,rect} = getCanvasRelativeXY(ev);
+    mouse.x = (x / rect.width) * 2 - 1;
+    mouse.y = -(y / rect.height) * 2 + 1;
+    return {x,y};
   }
-  function hideTooltip() { if (tooltip) tooltip.style.display = "none"; }
 
-  function resize() {
+  canvas.addEventListener("mousemove", (ev)=>{
+    const {x,y} = updateRayFromEvent(ev);
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(pinsGroup.children, false);
+    if(hits.length){
+      const obj = hits[0].object;
+      const ud = obj.userData || {};
+      showTip(x, y, `${ud.emoji||""} ${ud.product||ud.id||"Produkt"}`.trim(), ud.label || "");
+      canvas.style.cursor = "pointer";
+    } else {
+      hideTip();
+      canvas.style.cursor = "grab";
+    }
+  }, {passive:true});
+
+  canvas.addEventListener("mouseleave", ()=>{
+    hideTip();
+    canvas.style.cursor = "grab";
+  }, {passive:true});
+
+  canvas.addEventListener("click", (ev)=>{
+    updateRayFromEvent(ev);
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(pinsGroup.children, false);
+    if(!hits.length) return;
+
+    const obj = hits[0].object;
+    const ud = obj.userData || {};
+    setStatus(`Fokus: ${ud.emoji||""} ${ud.product||ud.id||""} – ${ud.label||""}`.trim());
+
+    // rotate globe to bring pin to front
+    const target = obj.position.clone().normalize();
+    const camDir = new THREE.Vector3();
+    camera.getWorldDirection(camDir);
+    const desired = camDir.clone().multiplyScalar(-1).normalize();
+    const q = new THREE.Quaternion().setFromUnitVectors(target, desired);
+    globeGroup.quaternion.premultiply(q);
+  });
+
+  function buildPins(data){
+    clearPins();
+
+    const products = data?.products || [];
+    let used = products;
+
+    if(focusId){
+      used = products.filter(p => String(p.id).toLowerCase() === focusId.toLowerCase());
+      if(used.length) setFilterLabel(`Fokus: ${used[0].emoji||""} ${used[0].name||used[0].id}`.trim());
+      else setFilterLabel(`Fokus: ${focusId} (nicht gefunden)`);
+    } else {
+      setFilterLabel("Alle Produkte");
+    }
+
+    let count = 0;
+    const hash = (s)=>{ let h=0; for(let i=0;i<s.length;i++) h=(h*31 + s.charCodeAt(i))>>>0; return h; };
+
+    for(const p of used){
+      if(!p?.pins?.length) continue;
+      const h = hash(p.id || p.name || "x");
+      const color = 0xff5a3d ^ (h & 0x00ffff);
+
+      for(const pin of p.pins){
+        if(typeof pin.lat !== "number" || typeof pin.lon !== "number") continue;
+        const mesh = makePinMesh(color);
+        const pos = latLonToVec3(pin.lat, pin.lon, R * 1.001);
+        mesh.position.copy(pos);
+
+        const normal = pos.clone().normalize();
+        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), normal);
+
+        mesh.userData = {
+          id: p.id,
+          product: p.name,
+          emoji: p.emoji,
+          label: pin.label || ""
+        };
+
+        pinsGroup.add(mesh);
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  function resize(){
     const rect = canvas.getBoundingClientRect();
     const w = Math.max(320, Math.floor(rect.width));
-    const h = Math.max(420, Math.floor(rect.height));
+    const h = Math.max(320, Math.floor(rect.height));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
   window.addEventListener("resize", resize);
 
-  async function loadPinsJSON() {
-    const res = await fetch("/pins.json", { cache: "no-store" });
-    if (!res.ok) throw new Error("pins.json not found");
-    return await res.json();
-  }
+  setStatus("lädt…");
+  canvas.style.cursor = "grab";
 
-  function flattenPins(pinsJson) {
-    const products = pinsJson?.products || {};
-    const out = [];
-    for (const [pid, p] of Object.entries(products)) {
-      const list = Array.isArray(p.pins) ? p.pins : [];
-      for (const pin of list) {
-        out.push({
-          productId: pid,
-          productName: p.name || pid,
-          name: pin.name,
-          lat: Number(pin.lat),
-          lon: Number(pin.lon)
-        });
-      }
-    }
-    return out;
-  }
-
-  function clearPins() {
-    while (pinGroup.children.length) pinGroup.remove(pinGroup.children[0]);
-  }
-
-  const focusAnim = { active: false, t: 0, fromX: 0, fromY: 0, toX: 0, toY: 0, fromD: 0, toD: 0 };
-
-  function focusCameraOn(lat, lon) {
-    const phi = (90 - lat) * Math.PI / 180;
-    const theta = (lon + 180) * Math.PI / 180;
-
-    const targetRotY = theta - Math.PI;
-    const targetRotX = (phi - Math.PI / 2) * 0.6;
-
-    focusAnim.active = true;
-    focusAnim.t = 0;
-    focusAnim.fromY = world.rotation.y;
-    focusAnim.fromX = world.rotation.x;
-    focusAnim.toY = targetRotY;
-    focusAnim.toX = targetRotX;
-
-    if (controls) {
-      controls.target.set(0, 0, 0);
-      const d = controls.getDistance();
-      focusAnim.fromD = d;
-      focusAnim.toD = Math.max(2.4, Math.min(3.2, d));
-    }
-  }
-
-  function stepFocus(dt) {
-    if (!focusAnim.active) return;
-    focusAnim.t += dt;
-    const p = Math.min(1, focusAnim.t / 0.9);
-    const e = 1 - Math.pow(1 - p, 3);
-
-    world.rotation.y = focusAnim.fromY + (focusAnim.toY - focusAnim.fromY) * e;
-    world.rotation.x = focusAnim.fromX + (focusAnim.toX - focusAnim.fromX) * e;
-
-    if (controls) {
-      const d = focusAnim.fromD + (focusAnim.toD - focusAnim.fromD) * e;
-      const dir = camera.position.clone().normalize();
-      camera.position.copy(dir.multiplyScalar(d));
-      controls.update();
-    }
-
-    if (p >= 1) focusAnim.active = false;
-  }
-
-  let allPins = [];
-  let pinsForView = [];
-
-  async function init() {
+  let tries = 0;
+  (function resizeUntilReady(){
     resize();
-    setStatus("lädt…");
+    const r = canvas.getBoundingClientRect();
+    if((r.width < 10 || r.height < 10) && tries < 60){
+      tries++;
+      requestAnimationFrame(resizeUntilReady);
+      return;
+    }
+  })();
 
-    try {
-      const pinsJson = await loadPinsJSON();
-      allPins = flattenPins(pinsJson);
-
-      pinsForView = focusId ? allPins.filter(p => p.productId === focusId) : allPins.slice();
-
-      clearPins();
-
-      if (pinsForView.length === 0) {
-        setStatus("bereit ✅ (keine Pins für diese Auswahl)");
-      } else {
-        for (const p of pinsForView) addPin(p.lat, p.lon, `${p.productName}: ${p.name}`, p.productId);
-        setStatus(`bereit ✅ (${pinsForView.length} Pins)`);
-
-        if (focusId) {
-          const idx = Math.max(0, Math.min(focusPinIndex, pinsForView.length - 1));
-          const fp = pinsForView[idx];
-          if (fp) focusCameraOn(fp.lat, fp.lon);
-        }
-      }
-
-      const focusName = (pinsForView[0]?.productName) || "";
-      if (focusId) setHint(`Fokus: ${focusId}${focusName ? " – " + focusName : ""} • Tipp: ?id=f03&pin=0`);
-      else setHint("Alle Produkte • Tipp: ?id=f03 (z. B. Banane)");
-    } catch (e) {
+  let pinCount = 0;
+  loadPins()
+    .then((data)=>{
+      pinCount = buildPins(data);
+      setStatus(`bereit ✅ (${pinCount} Pins)`);
+      if(focusId && pinCount === 0) setStatus(`bereit ✅ (0 Pins) – id=${focusId} hat keine Pins`);
+    })
+    .catch((e)=>{
       console.error(e);
-      setStatus("FEHLER – pins.json fehlt oder ist kaputt.");
-      setHint("Lege public/pins.json an und lade neu.");
+      setStatus("FEHLER – pins.json konnte nicht geladen werden");
+    });
+
+  function tick(){
+    if(!isPointerDown){
+      globeGroup.rotation.y += 0.0015; // auto rotate
     }
-  }
-
-  let last = performance.now();
-  function tick(now) {
-    const dt = (now - last) / 1000;
-    last = now;
-
-    // Rotate the whole world (globe + pins + atmosphere together)
-    if(!dragging && !focusAnim.active){
-      world.rotation.y += 0.0016;
-    }
-
-    raycaster.setFromCamera(mouse, camera);
-    const hits = raycaster.intersectObjects(pinGroup.children, false);
-    const hit = hits[0]?.object || null;
-
-    if (hit !== hovered) {
-      hovered = hit;
-      if (!hovered) hideTooltip();
-    }
-
-    if (hovered && window.__lastMouseEvent && tooltip) {
-      showTooltip(window.__lastMouseEvent, hovered.userData.label);
-    }
-
-    stepFocus(dt);
-    if (controls) controls.update();
+    glow.rotation.y += 0.0008;
+    if(controls) controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
-
-  init().then(() => requestAnimationFrame(tick));
+  tick();
 })();
