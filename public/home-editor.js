@@ -1,9 +1,29 @@
 (function(){
-  const PASSWORD = "55";
+  // Admin access: keep the unlock code out of the UI.
+  // Stored as SHA-256 hash (sha256("55")).
+  const PASS_HASH = "02d20bbd7e394ad5999a4cebabac9619732c343a4cac99470c03e23ba2bdc2bc";
+
+  const isAdmin = (() => {
+    const sp = new URLSearchParams(location.search || "");
+    return sp.get("admin") === "1" || (location.hash || "").toLowerCase().includes("admin");
+  })();
+
+  async function sha256Hex(str){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(str)));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+  }
+
+  function getPw(){ return window.__EDITOR_PASSWORD__ || ""; }
 
   const fab = document.getElementById("homeEditorFab");
   const drawer = document.getElementById("homeEditorDrawer");
   const closeBtn = document.getElementById("homeEditorClose");
+
+  // Hide editor UI for normal visitors.
+  if(!isAdmin){
+    if(fab) fab.style.display = "none";
+    return;
+  }
 
   const lockArea = document.getElementById("homeLockArea");
   const editorArea = document.getElementById("homeEditorArea");
@@ -61,10 +81,13 @@
     }
   }
 
-  unlockBtn?.addEventListener("click", () => {
+  unlockBtn?.addEventListener("click", async () => {
     const pw = (pwInput.value || "").trim();
-    if(pw === PASSWORD){ window.__EDITOR_PASSWORD__ = pw; setUnlocked(true);} 
-    else{
+    const hex = await sha256Hex(pw);
+    if(hex === PASS_HASH){
+      window.__EDITOR_PASSWORD__ = pw;
+      setUnlocked(true);
+    } else {
       pwInput.value = "";
       pwInput.placeholder = "Falsches Passwort";
       pwInput.focus();
@@ -355,7 +378,7 @@
       if(!model.pages[pid].hero) model.pages[pid].hero = (t.emoji||"🍃")+" "+(t.title||"Seite");
     });
 
-    if(SiteStore.saveAsync){ SiteStore.saveAsync(model, window.__EDITOR_PASSWORD__ || PASSWORD); } else { if(SiteStore.saveAsync){ SiteStore.saveAsync(model, window.__EDITOR_PASSWORD__ || PASSWORD); } else { SiteStore.save(model); } }
+    if(SiteStore.saveAsync){ SiteStore.saveAsync(model, getPw()); } else { if(SiteStore.saveAsync){ SiteStore.saveAsync(model, getPw()); } else { SiteStore.save(model); } }
     window.dispatchEvent(new CustomEvent("site:updated"));
     closeDrawer();
   });
@@ -365,7 +388,7 @@
     model.site = model.site || {};
     model.site.title = (siteTitle.value || "").trim() || model.site.title;
     model.site.subtitle = (siteSubtitle.value || "").trim() || model.site.subtitle;
-    if(SiteStore.saveAsync){ SiteStore.saveAsync(model, window.__EDITOR_PASSWORD__ || PASSWORD); } else { if(SiteStore.saveAsync){ SiteStore.saveAsync(model, window.__EDITOR_PASSWORD__ || PASSWORD); } else { SiteStore.save(model); } }
+    if(SiteStore.saveAsync){ SiteStore.saveAsync(model, getPw()); } else { if(SiteStore.saveAsync){ SiteStore.saveAsync(model, getPw()); } else { SiteStore.save(model); } }
     window.dispatchEvent(new CustomEvent("site:updated"));
     closeDrawer();
   });

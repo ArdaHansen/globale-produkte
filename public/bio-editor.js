@@ -5,6 +5,18 @@
   - Keeps UI lightweight and consistent with existing site editor patterns
 */
 (function () {
+  // Admin-only editor access (do not reveal the unlock code in plain text)
+  const PASS_HASH = "02d20bbd7e394ad5999a4cebabac9619732c343a4cac99470c03e23ba2bdc2bc"; // sha256("55")
+  const isAdmin = (() => {
+    const sp = new URLSearchParams(location.search || "");
+    return sp.get("admin") === "1" || (location.hash || "").toLowerCase().includes("admin");
+  })();
+
+  async function sha256Hex(str){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+
   const fab = document.getElementById("bioEditorFab");
   const drawer = document.getElementById("bioEditorDrawer");
   const closeBtn = document.getElementById("bioEditorClose");
@@ -22,6 +34,17 @@
     toast.classList.toggle("toast-bad", !ok);
     toast.classList.add("toast-show");
     setTimeout(() => toast.classList.remove("toast-show"), 2200);
+  }
+
+  // Hide editor UI for normal visitors.
+  if(!isAdmin){
+    if(fab) fab.style.display = "none";
+    return;
+  }
+
+  async function sha256Hex(str){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
   }
 
   function openDrawer() {
@@ -180,7 +203,20 @@
   async function save() {
     const pw = (pwInput && pwInput.value) ? pwInput.value : (window.__EDITOR_PASSWORD__ || "");
     if (!pw) {
-      showToast("Passwort fehlt (55).", false);
+      showToast("Passwort fehlt", false);
+      return;
+    }
+
+    // verify password without revealing it
+    try {
+      const h = await sha256Hex(String(pw));
+      if (h !== PASS_HASH) {
+        showToast("Falsches Passwort", false);
+        if (pwInput) pwInput.value = "";
+        return;
+      }
+    } catch (e) {
+      showToast("Passwort-Prüfung fehlgeschlagen", false);
       return;
     }
     // clamp strictness

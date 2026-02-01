@@ -41,6 +41,17 @@
       <div class="hero__actions reveal">
         <a class="btn btn--solid" href="#felder">Produkte ansehen</a>
         <a class="btn btn--ghost" href="#hinweise">Wie funktioniert’s?</a>
+        <a class="btn btn--ghost" href="#protokoll">Protokoll</a>
+      </div>
+
+      <div class="callout callout--soft reveal" style="margin-top:16px; max-width: 980px;">
+        <h3 style="margin:0 0 8px;">Worum geht’s hier?</h3>
+        <p style="margin:0;">
+          Wir, das Team von <strong>Globale-Produkte.de</strong>, haben eine Website entwickelt, die zeigt,
+          <strong>woher typische Produkte im Supermarkt kommen</strong> und <strong>wie nachhaltig</strong> ihre Herkunft
+          und Kennzeichnung einzuschätzen ist. Du kannst das entweder interaktiv über unseren <strong>3D‑Globus</strong>
+          entdecken oder dir im Bereich <strong>Biosiegel</strong> anschauen, welche Standards wirklich streng sind.
+        </p>
       </div>
     </div>
   </main>
@@ -77,7 +88,7 @@
     <div class="container">
       <header class="section__head reveal">
         <h2>Mehr</h2>
-        <p>Zusätzliche Inhalte, die im Editor gepflegt werden können.</p>
+        <p>Zusätzliche Inhalte rund um Nachhaltigkeit und Lieferketten.</p>
       </header>
       <div class="tilegrid tilegrid--two reveal" id="dynamicGrids" aria-label="Weitere Inhalte"></div>
     </div>
@@ -87,7 +98,7 @@
     <div class="container">
       <header class="section__head reveal">
         <h2>Produkte (<span data-count="tiles">15</span> Felder)</h2>
-        <p>Klicke ein Feld, um die <strong>Detailseite</strong> zu öffnen. Dort kannst du sie im Editor bearbeiten.</p>
+        <p>Klicke ein Feld, um die <strong>Detailseite</strong> zu öffnen und mehr über Herkunft, Transport und Bewertung zu sehen.</p>
       </header>
 
       <div class="tilegrid reveal" id="tileGrid" aria-label="<span data-count="tiles">15</span> Felder"></div>
@@ -99,10 +110,48 @@
       <div class="callout reveal">
         <h2>So nutzt ihr die Website</h2>
         <ul>
-          <li>Öffne ein Produkt und klicke unten rechts auf <strong>✎</strong>, um die Seite zu bearbeiten (Passwort: <strong>55</strong>).</li>
-          <li>Jede Produktseite hat 4 Abschnitte: Anbau, Arbeitsbedingungen, Transport, Folgen vor Ort.</li>
-          <li>Änderungen werden lokal im Browser gespeichert. Für gemeinsame Bearbeitung auf mehreren Geräten braucht man ein Backend.</li>
+          <li><strong>Globus:</strong> Öffne den „Globalen Warenstrom“, um Herkunftsregionen als Pins auf dem 3D‑Globus zu sehen (drag = drehen, scroll = zoomen).</li>
+          <li><strong>Biosiegel:</strong> Öffne die Biosiegel‑Timeline, um zu verstehen, welche Standards streng sind und was sie genau bedeuten.</li>
+          <li><strong>Produkte:</strong> Klicke ein Produktfeld, um Details zu Anbau, Arbeitsbedingungen, Transport und Folgen vor Ort zu lesen.</li>
+          <li><strong>Warum relevant?</strong> Viele Alltagsprodukte haben weite Lieferketten. Hier siehst du Herkunft & Standards auf einen Blick – verständlich und vergleichbar.</li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="protokoll">
+    <div class="container">
+      <header class="section__head reveal">
+        <h2>Protokoll – 5 Tage Projektarbeit</h2>
+        <p>Wir haben uns jeden Tag zur gleichen Uhrzeit digital getroffen und dann ca. <strong>6 Stunden</strong> intensiv an der Website gearbeitet.</p>
+      </header>
+
+      <div class="grid grid--2 reveal" style="gap:16px;">
+        <div class="card">
+          <h3>Tag 1 – Idee</h3>
+          <p>Wir haben entschieden, globale Produkte im Supermarkt als Thema zu nehmen, weil es uns alle betrifft. Ziel war eine Website, die nicht nur Text liefert, sondern Zusammenhänge sichtbar macht. Wir haben erste Produktideen gesammelt und überlegt, welche Kriterien „gut“ vs. „schlecht“ bedeuten.</p>
+          <p class="muted">Team: Arda (Entwicklung), Anton / Leon / Ben (Recherche & Idee), Noah (Recherche, Idee & Protokoll)</p>
+        </div>
+
+        <div class="card">
+          <h3>Tag 2 – Recherche + Website‑Basis</h3>
+          <p>Wir haben die wichtigsten Grundlagen zu Herkunft, Lieferketten und Biosiegeln recherchiert und Quellen gesammelt. Parallel wurde eine Website‑Basis mit einem Editor entwickelt, damit wir unsere Arbeitsergebnisse live pflegen und direkt teilen können. So konnten alle im Team Inhalte laufend ergänzen und verbessern.</p>
+        </div>
+
+        <div class="card">
+          <h3>Tag 3 – Wie kann man das entwickeln?</h3>
+          <p>Wir haben die Struktur der Website geplant: Startseite, Produktseiten, Globus und Biosiegel‑Bereich. Dann haben wir entschieden, welche Features wirklich Mehrwert bringen (z. B. Filter, Tooltips, klare Karten). Außerdem haben wir Layout, Farbstil und Nutzerführung abgestimmt, damit man schnell versteht, wo man klicken soll.</p>
+        </div>
+
+        <div class="card">
+          <h3>Tag 4 – Entwicklung & Recherche</h3>
+          <p>Wir haben die interaktiven Teile umgesetzt: 3D‑Globus mit Pins, Zoom/Drag und Fokus‑Funktion. Gleichzeitig wurde weiter recherchiert, um die Produkttexte und Biosiegel‑Infos fachlich korrekt zu machen. Wir haben Inhalte so formuliert, dass sie kurz sind, aber trotzdem aussagekräftig bleiben.</p>
+        </div>
+
+        <div class="card">
+          <h3>Tag 5 – Feinarbeiten & Abgabe</h3>
+          <p>Am letzten Tag ging es um Details: Lesbarkeit, Design‑Feinschliff, Fehlerfixes und saubere Struktur. Wir haben die Inhalte geprüft, Dopplungen entfernt und die Nutzerführung verbessert. Danach wurde alles final getestet und als Projekt abgegeben.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -121,7 +170,7 @@
     <div class="edhdr">
       <div>
         <div class="edhdr__title">Editor</div>
-        <div class="edhdr__sub">Hauptseite: Kacheln bearbeiten (Passwort 55)</div>
+        <div class="edhdr__sub">Hauptseite: Kacheln bearbeiten (nur Team)</div>
       </div>
       <button class="edclose" id="homeEditorClose" type="button" aria-label="Schließen">✕</button>
     </div>
