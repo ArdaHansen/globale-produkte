@@ -1107,13 +1107,20 @@ a:hover{ color: #ffffff; }
   width: min(520px, 92vw);
   background: linear-gradient(180deg, rgba(8,26,17,0.96), rgba(6,28,18,0.98));
   border-left: 1px solid rgba(255,255,255,0.12);
+  /* Hidden by default so the editor does NOT appear on initial page load */
+  display: none;
+  pointer-events: none;
   transform: translateX(110%);
   transition: transform .18s ease;
   z-index: 50;
-  display:flex;
   flex-direction: column;
 }
-.drawer-open{ transform: translateX(0%); }
+/* Open state */
+.drawer.drawer-open{
+  display:flex;
+  pointer-events: auto;
+  transform: translateX(0%);
+}
 .drawer-head{
   display:flex;
   justify-content: space-between;
@@ -1126,6 +1133,37 @@ a:hover{ color: #ffffff; }
 .drawer-body{ padding: 12px 14px 18px; overflow:auto; }
 .editor-actions{ display:flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .divider{ height: 1px; background: rgba(255,255,255,0.10); margin: 12px 0; }
+
+/* ==== Homepage tiles: match the green/glass look from the Biosiegel page ==== */
+.tile{
+  background: rgba(9, 30, 20, 0.58) !important;
+  border: 1px solid rgba(120, 255, 170, 0.18) !important;
+  box-shadow: 0 18px 55px rgba(0,0,0,0.30) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.tile:hover{
+  border-color: rgba(120, 255, 170, 0.32) !important;
+  box-shadow: 0 22px 70px rgba(0,0,0,0.36) !important;
+}
+
+.tile .tile__title,
+.tile .tile__title a,
+.tile h3,
+.tile h2{ color: rgba(244,255,249,0.95) !important; }
+
+.tile .tile__short,
+.tile .tile__meta,
+.tile p,
+.tile small{ color: rgba(230,255,242,0.80) !important; }
+
+/* Badges in tiles */
+.tile .badge{
+  background: rgba(34,179,86,0.22) !important;
+  border-color: rgba(34,179,86,0.38) !important;
+  color: rgba(236,255,244,0.92) !important;
+}
 
 .editor-list{ display:flex; flex-direction: column; gap: 12px; }
 .editor-item{
