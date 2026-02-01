@@ -1,168 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Biosiegel – Globale Produkte</title>
   <link rel="stylesheet" href="./style.css" />
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 </head>
-<body>
+<body class="page-bio">
   <header class="topbar">
-    <div class="container topbar__row">
-      <a class="brand" href="./index.html" aria-label="Zur Startseite">
-        <span class="brand__mark">🌍</span>
-        <span class="brand__name">Globale Produkte</span>
-      </a>
-      <nav class="topnav">
-        <a class="topnav__link" href="./index.html#produkte">Produkte</a>
-        <a class="topnav__link" href="./globe.html">Globus</a>
-        <a class="topnav__link is-active" href="./biosiegel.html">Biosiegel</a>
-      </nav>
+    <a class="backlink" href="./index.html">← Zurück</a>
+    <div class="topbar-title">
+      <div class="topbar-kicker">Projekt: Globale Produkte</div>
+      <div class="topbar-main">Biosiegel</div>
     </div>
+    <button id="bioEditorFab" class="fab" title="Biosiegel bearbeiten">✎</button>
   </header>
 
-  <main class="wrap">
-    <section class="hero hero--compact">
-      <div class="container">
-        <div class="hero__row">
-          <div>
-            <h1 class="hero__title">Biosiegel – was steckt dahinter?</h1>
-            <p class="hero__subtitle">Kurz, verständlich und vergleichbar: EU‑Bio, deutsches Bio, Bioland, Naturland und Demeter.</p>
-          </div>
-          <div class="hero__badge" aria-hidden="true">
-            <div class="badgeBadge">🌱</div>
-          </div>
-        </div>
-      </div>
+  <main class="container">
+    <section class="hero hero--bio">
+      <h1>Biosiegel im Überblick</h1>
+      <p class="muted">
+        Ein Biosiegel zeigt: Das Produkt folgt bestimmten Regeln der ökologischen Landwirtschaft – aber die Siegel sind unterschiedlich streng.
+      </p>
+
+      <!-- Timeline (wird durch biosiegel.js gerendert) -->
+      <div id="bioTimeline" class="bio-timeline" aria-label="Biosiegel Timeline"></div>
     </section>
 
-    <section class="section section--tight">
-      <div class="container">
-        <header class="section__head">
-          <h2>Timeline</h2>
-          <p>Vom Basis‑Standard (EU) bis zu besonders strengen Verbandsstandards.</p>
-        </header>
+    <!-- Cards/Grid (wird durch biosiegel.js gerendert) -->
+    <section id="bioGrid" class="bio-grid" aria-label="Biosiegel Karten"></section>
 
-        <div class="bioTimeline" role="list">
-          <div class="bioStep" role="listitem">
-            <div class="bioDot bioDot--base">EU</div>
-            <div class="bioCard">
-              <div class="bioCard__top">
-                <img src="./assets/biosiegel/eu-bio.svg" class="bioLogo" alt="EU-Bio-Logo (Symbol)" />
-                <div>
-                  <div class="bioName">EU‑Bio‑Logo</div>
-                  <div class="bioTag">Basis‑Standard</div>
-                </div>
-              </div>
-              <ul class="bioList">
-                <li>Pflichtkennzeichen für vorverpackte Bio‑Lebensmittel in der EU.</li>
-                <li>Mind. 95% der Zutaten aus ökologischem Landbau.</li>
-                <li>EU‑Öko‑Verordnung: Kontrollsystem & klare Regeln.</li>
-              </ul>
-              <div class="bioRating bioRating--ok">✅ Solider Mindeststandard</div>
-            </div>
-          </div>
-
-          <div class="bioStep" role="listitem">
-            <div class="bioDot bioDot--base">DE</div>
-            <div class="bioCard">
-              <div class="bioCard__top">
-                <img src="./assets/biosiegel/de-bio.svg" class="bioLogo" alt="Deutsches staatliches Bio-Siegel (Symbol)" />
-                <div>
-                  <div class="bioName">Deutsches Bio‑Siegel</div>
-                  <div class="bioTag">Gleiche Rechtslage wie EU‑Bio</div>
-                </div>
-              </div>
-              <ul class="bioList">
-                <li>Freiwilliges deutsches Markenzeichen (setzt EU‑Bio voraus).</li>
-                <li>Inhaltlich identisch zu den EU‑Bio‑Regeln (nicht automatisch strenger).</li>
-                <li>Registrierung/Zertifizierung notwendig.</li>
-              </ul>
-              <div class="bioRating bioRating--ok">✅ Gut zur Orientierung, aber nicht strenger als EU</div>
-            </div>
-          </div>
-
-          <div class="bioStep" role="listitem">
-            <div class="bioDot bioDot--good">NL</div>
-            <div class="bioCard">
-              <div class="bioCard__top">
-                <img src="./assets/biosiegel/naturland.svg" class="bioLogo" alt="Naturland (Symbol)" />
-                <div>
-                  <div class="bioName">Naturland</div>
-                  <div class="bioTag">Zusatz‑Kriterien (öko & sozial)</div>
-                </div>
-              </div>
-              <ul class="bioList">
-                <li>Internationaler Verband – zusätzliche ökologische & soziale Kriterien.</li>
-                <li>Fairness/Handel und Nachhaltigkeit spielen eine größere Rolle.</li>
-                <li>Oft strengere Anforderungen als EU‑Bio.</li>
-              </ul>
-              <div class="bioRating bioRating--good">🌟 Tendenziell strenger als EU‑Bio</div>
-            </div>
-          </div>
-
-          <div class="bioStep" role="listitem">
-            <div class="bioDot bioDot--good">BL</div>
-            <div class="bioCard">
-              <div class="bioCard__top">
-                <img src="./assets/biosiegel/bioland.svg" class="bioLogo" alt="Bioland (Symbol)" />
-                <div>
-                  <div class="bioName">Bioland</div>
-                  <div class="bioTag">Strenger als EU‑Bio</div>
-                </div>
-              </div>
-              <ul class="bioList">
-                <li>Größter deutscher Bio‑Anbauverband.</li>
-                <li>Vorgaben gehen über EU‑Standards hinaus (z. B. Tierwohl/Umweltauflagen).</li>
-                <li>Mehr Kontrolle und strengere Verbandsregeln.</li>
-              </ul>
-              <div class="bioRating bioRating--good">🌟 Streng – oft „besser“ als nur EU‑Bio</div>
-            </div>
-          </div>
-
-          <div class="bioStep" role="listitem">
-            <div class="bioDot bioDot--top">DM</div>
-            <div class="bioCard">
-              <div class="bioCard__top">
-                <img src="./assets/biosiegel/demeter.svg" class="bioLogo" alt="Demeter (Symbol)" />
-                <div>
-                  <div class="bioName">Demeter</div>
-                  <div class="bioTag">Sehr streng</div>
-                </div>
-              </div>
-              <ul class="bioList">
-                <li>Ältestes Bio‑Siegel (seit den 1920ern), biodynamischer Ansatz.</li>
-                <li>Sehr strenge Regeln (Bodenpflege, Tierhaltung, Kreislaufprinzip).</li>
-                <li>Gilt häufig als einer der strengsten Standards.</li>
-              </ul>
-              <div class="bioRating bioRating--top">🏆 Sehr streng – oft „Best‑in‑Class“</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout">
-          <div class="callout__title">Merksatz</div>
-          <div class="callout__text">EU‑Bio & deutsches Bio = Mindeststandard. Verbände wie <strong>Bioland</strong>, <strong>Naturland</strong> und <strong>Demeter</strong> sind meistens strenger – Demeter oft am strengsten.</div>
-        </div>
-
-        <div class="smallNote">
-          <strong>Quellen (für eure Doku):</strong>
-          <ul>
-            <li>WWF: „Was bedeutet welches Siegel?“</li>
-            <li>Umweltbundesamt: Organic farming / eco‑friendly farming</li>
-            <li>Bingenheimer Saatgut: Infos/Material zu Demeter, Bioland, Naturland</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <!-- Fallback: alter Inhalt bleibt im Projekt (nicht aktiv) -->
+    <template id="bioLegacyTemplate">
+      <!-- (Legacy HTML war hier früher statisch. Wird bewusst als Template behalten, damit nichts „verschwindet“.) -->
+    </template>
   </main>
 
-  <footer class="footer">
-    <div class="container footer__row">
-      <div class="muted">© Projekt: Globale Produkte</div>
-      <div class="muted">Tipp: Klick auf „Globus“, um die Herkunft auf der Weltkarte zu sehen.</div>
+  <!-- Editor Drawer -->
+  <aside id="bioEditorDrawer" class="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-title">Biosiegel-Editor</div>
+        <div class="drawer-subtitle muted">Passwort: <code>55</code> • Speichert im Backend (wenn aktiv)</div>
+      </div>
+      <button id="bioEditorClose" class="btn btn-ghost" type="button">Schließen</button>
     </div>
-  </footer>
+
+    <div class="drawer-body">
+      <div class="editor-row">
+        <label class="label">Passwort</label>
+        <input id="bioEditorPw" class="input" type="password" placeholder="55" />
+      </div>
+
+      <div class="editor-actions">
+        <button id="bioAddSeal" class="btn" type="button">+ Siegel hinzufügen</button>
+        <button id="bioSave" class="btn btn-primary" type="button">Speichern</button>
+        <button id="bioReset" class="btn btn-ghost" type="button">Zurücksetzen</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div id="bioEditorList" class="editor-list"></div>
+
+      <div class="hint muted">
+        Tipp: Du kannst Reihenfolge ändern (↑/↓), Einträge deaktivieren und Inhalte anpassen.
+      </div>
+    </div>
+  </aside>
+
+  <div id="bioToast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- JS -->
+  <script src="./data.js"></script>
+  <script src="./store.js"></script>
+  <script src="./bio-editor.js"></script>
+  <script src="./biosiegel.js"></script>
 </body>
 </html>
