@@ -2,7 +2,8 @@
   --bg0:#f4fff8;
   --bg1:#effff5;
   --ink:#0a1420;
-  --muted:rgba(10,20,32,.70);
+  /* "Muted" still needs contrast on the dark background */
+  --muted:rgba(236,255,246,0.78);
   --line:rgba(10,20,32,.12);
 
   --g0:#0f7a35;
@@ -77,6 +78,53 @@ body{
 .logo__text{ font-size: 14px; }
 
 .nav__links{ display:flex; gap: 10px; }
+
+/* Simple topbar used on additional pages (protokoll, biosiegel, globe)
+   Previously unstyled -> links looked like default browser text. */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  background: rgba(6,18,12,0.55);
+  border-bottom: 1px solid rgba(70,247,197,0.14);
+}
+.topbar__inner{
+  width: min(var(--max), calc(100% - 36px));
+  margin: 0 auto;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.topbar__brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color: rgba(242,255,248,0.95);
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+.topbar__dot{
+  width: 10px; height: 10px; border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, var(--g2), var(--g0));
+  box-shadow: 0 0 0 8px rgba(34,179,86,.12);
+}
+.topbar__nav{ display:flex; gap: 8px; align-items:center; }
+.topbar__link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-decoration:none;
+  color: rgba(242,255,248,0.92);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(70,247,197,0.14);
+}
+.topbar__link:hover{ background: rgba(255,255,255,0.12); }
 .nav__links a{
   text-decoration:none;
   color: rgba(10,20,32,.76);
@@ -633,7 +681,8 @@ h1{
 }
 
 body{
-  color: var(--gp-text);
+  /* Site background is dark/green → keep global text bright for readability */
+  color: var(--text);
 }
 
 .hero{
@@ -642,13 +691,14 @@ body{
 }
 
 .lead{
-  color: var(--gp-muted);
+  color: var(--muted);
   max-width: 68ch;
 }
 
 .section__head p,
 .muted{
-  color: var(--gp-muted);
+  /* muted text is used on the dark background → keep it bright */
+  color: var(--muted);
 }
 
 .tilegrid{
@@ -1401,7 +1451,7 @@ a:hover{ color: #ffffff; }
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(10px);
 }
-.timeline-rail__item{ position: relative; padding-top: 6px; }
+.timeline-rail__item{ position: relative; padding-top: 40px; }
 .timeline-rail__dot{
   width: 14px;
   height: 14px;
@@ -1419,9 +1469,21 @@ a:hover{ color: #ffffff; }
   background: rgba(255,255,255,0.16);
 }
 .timeline-rail__item:last-child:after{ display: none; }
-.timeline-rail__meta{ margin-top: 10px; }
-.timeline-rail__meta strong{ display: block; color: rgba(255,255,255,0.95); font-size: 13px; }
-.timeline-rail__meta span{ display: block; color: rgba(255,255,255,0.72); font-size: 12px; }
+.timeline-rail__meta{
+  position: absolute;
+  top: 0;
+  left: 14px;
+  transform: translateX(-50%);
+  background: rgba(6,18,12,0.80);
+  border: 1px solid rgba(70,247,197,0.18);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-radius: 999px;
+  padding: 6px 10px;
+  min-width: 88px;
+  text-align: center;
+}
+.timeline-rail__meta strong{ display: block; color: rgba(255,255,255,0.95); font-size: 13px; line-height: 1.1; }
+.timeline-rail__meta span{ display: block; color: rgba(255,255,255,0.72); font-size: 12px; line-height: 1.1; }
 
 .protokoll-team{
   margin-top: 14px;
@@ -1436,6 +1498,8 @@ a:hover{ color: #ffffff; }
 @media (max-width: 900px){
   .timeline-rail{ grid-template-columns: 1fr; }
   .timeline-rail__item:after{ display: none; }
+  .timeline-rail__item{ padding-top: 14px; }
+  .timeline-rail__meta{ position: static; transform: none; margin-top: 10px; min-width: 0; }
 }
 
 /* ---------------------------------------------------------
